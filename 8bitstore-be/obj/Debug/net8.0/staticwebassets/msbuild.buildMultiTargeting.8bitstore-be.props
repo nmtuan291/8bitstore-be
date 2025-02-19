@@ -1,0 +1,3 @@
+﻿<Project>
+  <Import Project="..\build\8bitstore-be.props" />
+</Project>
