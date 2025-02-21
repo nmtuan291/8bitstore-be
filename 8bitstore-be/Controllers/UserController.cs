@@ -1,5 +1,6 @@
 ﻿using _8bitstore_be.DTO;
 using _8bitstore_be.Interfaces;
+using _8bitstore_be.Services;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -14,11 +15,13 @@ namespace _8bitstore_be.Controllers
     {
         private readonly IRegistrationService _registrationService;
         private readonly IConfiguration _config;
+        private readonly ILoginService _loginService;
 
-        public UserController(IRegistrationService registrationService, IConfiguration config)
+        public UserController(IRegistrationService registrationService, ILoginService loginService)
         {
             _registrationService = registrationService;
-            _config = config;
+            _loginService = loginService;
+
         }
 
         [HttpPost("signup")]
@@ -34,7 +37,7 @@ namespace _8bitstore_be.Controllers
                 return BadRequest(ModelState);
             }
 
-            RegistrationResponseDto response = await _registrationService.SignupAsync(user);
+            AuthResponseDto response = await _registrationService.SignupAsync(user);
 
             if (!response.isSuccess)
             {
@@ -44,11 +47,51 @@ namespace _8bitstore_be.Controllers
             return Ok("Sign up successfully");
         }
 
-        [EnableCors("AllowFrontend")]
-        [HttpGet("test")]
-        public IActionResult Test()
+        [HttpPost("login")]
+        public async Task<IActionResult> Login([FromBody] UserLoginDto user)
         {
-            return Ok("CORS is working!");
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            if (user == null)
+            {
+                return BadRequest("User data is required");
+            }
+
+            AuthResponseDto response = await _loginService.LoginAsync(user);
+
+            if (response == null)
+            {
+                return StatusCode(500, "An error occurred during login.");
+            }
+
+
+            if (!response.isSuccess)
+            {
+                return BadRequest(response.Errors);
+            }
+
+            // Set cookies with the access token and refresh token
+            var accessToken = response.User.AccessToken;
+            var refreshToken = response.User.RefreshToken;
+
+            Response.Cookies.Append("AccessToken", accessToken, new CookieOptions
+            {
+                HttpOnly = true,
+                Secure = true,
+                SameSite = SameSiteMode.Strict
+            });
+
+            Response.Cookies.Append("RefreshToken", refreshToken, new CookieOptions
+            {
+                HttpOnly = true,
+                Secure = true,
+                SameSite = SameSiteMode.Strict
+            });
+
+            return Ok("Login successful");
         }
     }
 }

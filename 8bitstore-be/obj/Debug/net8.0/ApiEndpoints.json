@@ -1,6 +1,22 @@
 [
   {
     "ContainingType": "_8bitstore_be.Controllers.UserController",
+    "Method": "Login",
+    "RelativePath": "api/User/login",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "user",
+        "Type": "_8bitstore_be.DTO.UserLoginDto",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "_8bitstore_be.Controllers.UserController",
     "Method": "SignUp",
     "RelativePath": "api/User/signup",
     "HttpMethod": "POST",
@@ -13,16 +29,6 @@
         "IsRequired": true
       }
     ],
-    "ReturnTypes": []
-  },
-  {
-    "ContainingType": "_8bitstore_be.Controllers.UserController",
-    "Method": "Test",
-    "RelativePath": "api/User/test",
-    "HttpMethod": "GET",
-    "IsController": true,
-    "Order": 0,
-    "Parameters": [],
     "ReturnTypes": []
   },
   {

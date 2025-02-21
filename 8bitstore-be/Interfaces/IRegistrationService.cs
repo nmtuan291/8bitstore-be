@@ -5,6 +5,6 @@ namespace _8bitstore_be.Interfaces
 {
     public interface IRegistrationService
     {
-        public Task<RegistrationResponseDto> SignupAsync(UserForRegistrationDto userInfo);
+        public Task<AuthResponseDto> SignupAsync(UserForRegistrationDto userInfo);
     }
 }
