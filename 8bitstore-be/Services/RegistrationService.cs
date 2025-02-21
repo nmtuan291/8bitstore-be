@@ -13,12 +13,11 @@ namespace _8bitstore_be.Services
         { 
             _userManager = userManager;
         }
-        public async Task<RegistrationResponseDto> SignupAsync(UserForRegistrationDto userInfo) 
+        public async Task<AuthResponseDto> SignupAsync(UserForRegistrationDto userInfo) 
         {
             User user = new User
             {
                 FullName = userInfo.FullName,
-                Id = userInfo.Email,
                 Address = userInfo.Address,
                 UserName = userInfo.UserName,
                 Email = userInfo.Email
@@ -26,7 +25,7 @@ namespace _8bitstore_be.Services
 
             var result = await _userManager.CreateAsync(user, userInfo.Password);
 
-            RegistrationResponseDto response = new RegistrationResponseDto
+            AuthResponseDto response = new AuthResponseDto
             {
                 isSuccess = result.Succeeded,
                 Errors = result.Errors.Select(e => e.Description)
