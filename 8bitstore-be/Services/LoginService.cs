@@ -55,8 +55,8 @@ namespace _8bitstore_be.Services
                 };
             }
 
-            string accessToken = _authService.GenerateAccessToken(findUser.UserName);
-            string refreshToken = _authService.GenerateRefreshToken(findUser.UserName);
+            string accessToken = await _authService.GenerateAccessToken(findUser);
+            string refreshToken = await _authService.GenerateRefreshToken(findUser);
 
             return new AuthResponseDto
             {
