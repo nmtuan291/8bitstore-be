@@ -1,7 +1,12 @@
-﻿namespace _8bitstore_be.DTO
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace _8bitstore_be.DTO
 {
     public class ProductDto
     {
+        [Required]
+        public string ProductId { get; set; }
+
         public int StockNum { get; set; }
         public int Price { get; set; }
         public string Manufacturer { get; set; }

@@ -5,27 +5,37 @@ using _8bitstore_be.DTO;
 using _8bitstore_be.Models;
 using Microsoft.IdentityModel.Tokens;
 using _8bitstore_be.Interfaces;
+using Microsoft.AspNetCore.Identity;
 
 namespace _8bitstore_be.Services
 {
     public class AuthService: IAuthService
     {
         private readonly IConfiguration _config;
+        private readonly UserManager<User> _userManager;
 
-        public AuthService(IConfiguration config)
+        public AuthService(IConfiguration config, UserManager<User> userManager)
         {
             _config = config;
+            _userManager = userManager;
         }
 
-        public string GenerateAccessToken(string userName)
+        public async Task<string> GenerateAccessToken(User user)
         {
             var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_config["Jwt:Access_Key"]));
             var credentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256);
+            
+            var roles = await _userManager.GetRolesAsync(user);
 
-            var claims = new[]
+            var claims = new List<Claim>
             {
-                new Claim(ClaimTypes.NameIdentifier, userName)
+                new Claim(ClaimTypes.NameIdentifier, user.UserName),
             };
+
+            if (roles != null)
+            {
+                claims.AddRange(roles.Select(role => new Claim(ClaimTypes.Role, role)));
+            }
 
             var token = new JwtSecurityToken(_config["Jwt:Issuer"],
                 _config["Jwt:Audience"],
@@ -37,15 +47,22 @@ namespace _8bitstore_be.Services
             return new JwtSecurityTokenHandler().WriteToken(token);
         }
 
-        public string GenerateRefreshToken(string userName)
+        public async Task<string> GenerateRefreshToken(User user)
         {
             var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_config["Jwt:Refresh_Key"]));
             var credentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256);
 
-            var claims = new[]
+            var roles = await _userManager.GetRolesAsync(user);
+
+            var claims = new List<Claim>
             {
-                new Claim(ClaimTypes.NameIdentifier, userName)
+                new Claim(ClaimTypes.NameIdentifier, user.UserName),
             };
+
+            if (roles != null)
+            {
+                claims.AddRange(roles.Select(role => new Claim(ClaimTypes.Role, role)));
+            }
 
             var token = new JwtSecurityToken(_config["Jwt:Issuer"],
                 _config["Jwt:Audience"],

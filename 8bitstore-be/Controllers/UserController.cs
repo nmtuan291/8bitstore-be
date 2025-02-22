@@ -14,7 +14,6 @@ namespace _8bitstore_be.Controllers
     public class UserController : ControllerBase
     {
         private readonly IRegistrationService _registrationService;
-        private readonly IConfiguration _config;
         private readonly ILoginService _loginService;
 
         public UserController(IRegistrationService registrationService, ILoginService loginService)
@@ -46,7 +45,7 @@ namespace _8bitstore_be.Controllers
 
             return Ok("Sign up successfully");
         }
-
+ 
         [HttpPost("login")]
         public async Task<IActionResult> Login([FromBody] UserLoginDto user)
         {
