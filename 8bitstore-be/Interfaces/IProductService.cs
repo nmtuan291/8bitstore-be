@@ -1,5 +1,5 @@
 ﻿using _8bitstore_be.Models;
-using _8bitstore_be.DTO;
+using _8bitstore_be.DTO.Product;
 
 namespace _8bitstore_be.Interfaces
 {

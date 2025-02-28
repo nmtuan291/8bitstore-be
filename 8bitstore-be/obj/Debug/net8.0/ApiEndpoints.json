@@ -1,5 +1,31 @@
 [
   {
+    "ContainingType": "_8bitstore_be.Controllers.CartController",
+    "Method": "AddItem",
+    "RelativePath": "api/Cart/add-item",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "request",
+        "Type": "_8bitstore_be.DTO.Cart.AddItemRequestDto",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "_8bitstore_be.Controllers.CartController",
+    "Method": "GetCart",
+    "RelativePath": "api/Cart/get-cart",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": []
+  },
+  {
     "ContainingType": "_8bitstore_be.Controllers.ProductController",
     "Method": "GetProduct",
     "RelativePath": "api/Product/get-product",
@@ -63,6 +89,16 @@
   },
   {
     "ContainingType": "_8bitstore_be.Controllers.UserController",
+    "Method": "GetUser",
+    "RelativePath": "api/User/get-user",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "_8bitstore_be.Controllers.UserController",
     "Method": "Login",
     "RelativePath": "api/User/login",
     "HttpMethod": "POST",
@@ -71,7 +107,7 @@
     "Parameters": [
       {
         "Name": "user",
-        "Type": "_8bitstore_be.DTO.UserLoginDto",
+        "Type": "_8bitstore_be.DTO.User.UserLoginDto",
         "IsRequired": true
       }
     ],
@@ -87,7 +123,7 @@
     "Parameters": [
       {
         "Name": "user",
-        "Type": "_8bitstore_be.DTO.UserForRegistrationDto",
+        "Type": "_8bitstore_be.DTO.User.UserForRegistrationDto",
         "IsRequired": true
       }
     ],

@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace _8bitstore_be.DTO
+namespace _8bitstore_be.DTO.Product
 {
     public class ProductDto
     {
@@ -8,7 +8,7 @@ namespace _8bitstore_be.DTO
         public string ProductId { get; set; }
 
         public int StockNum { get; set; }
-        public int Price { get; set; }
+        public decimal Price { get; set; }
         public string Manufacturer { get; set; }
         public ICollection<string> Platform { get; set; }
         public ICollection<string> Type { get; set; }

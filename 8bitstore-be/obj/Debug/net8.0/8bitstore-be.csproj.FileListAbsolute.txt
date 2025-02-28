@@ -147,7 +147,6 @@ C:\Users\Admin\source\repos\8bitstore-be\8bitstore-be\bin\Debug\net8.0\tr\Micros
 C:\Users\Admin\source\repos\8bitstore-be\8bitstore-be\bin\Debug\net8.0\zh-Hans\Microsoft.CodeAnalysis.Workspaces.MSBuild.BuildHost.resources.dll
 C:\Users\Admin\source\repos\8bitstore-be\8bitstore-be\bin\Debug\net8.0\zh-Hant\Microsoft.CodeAnalysis.Workspaces.MSBuild.BuildHost.resources.dll
 C:\Users\Admin\source\repos\8bitstore-be\8bitstore-be\bin\Debug\net8.0\runtimes\browser\lib\net8.0\System.Text.Encodings.Web.dll
-C:\Users\Admin\source\repos\8bitstore-be\8bitstore-be\obj\Debug\net8.0\staticwebassets.upToDateCheck.txt
 C:\Users\Admin\source\repos\8bitstore-be\8bitstore-be\bin\Debug\net8.0\Microsoft.AspNetCore.Authentication.JwtBearer.dll
 C:\Users\Admin\source\repos\8bitstore-be\8bitstore-be\bin\Debug\net8.0\Microsoft.Bcl.Memory.dll
 C:\Users\Admin\source\repos\8bitstore-be\8bitstore-be\bin\Debug\net8.0\Microsoft.IdentityModel.Abstractions.dll
@@ -158,3 +157,4 @@ C:\Users\Admin\source\repos\8bitstore-be\8bitstore-be\bin\Debug\net8.0\Microsoft
 C:\Users\Admin\source\repos\8bitstore-be\8bitstore-be\bin\Debug\net8.0\Microsoft.IdentityModel.Tokens.dll
 C:\Users\Admin\source\repos\8bitstore-be\8bitstore-be\bin\Debug\net8.0\System.IdentityModel.Tokens.Jwt.dll
 C:\Users\Admin\source\repos\8bitstore-be\8bitstore-be\obj\Debug\net8.0\8bitstore-be.sourcelink.json
+C:\Users\Admin\source\repos\8bitstore-be\8bitstore-be\obj\Debug\net8.0\staticwebassets.upToDateCheck.txt

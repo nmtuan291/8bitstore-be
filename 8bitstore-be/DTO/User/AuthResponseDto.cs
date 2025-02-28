@@ -1,4 +1,4 @@
-﻿namespace _8bitstore_be.DTO
+﻿namespace _8bitstore_be.DTO.User
 {
     public class AuthResponseDto
     {

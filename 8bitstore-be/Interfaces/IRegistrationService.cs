@@ -1,5 +1,5 @@
 ﻿using Microsoft.AspNetCore.Identity;
-using _8bitstore_be.DTO;
+using _8bitstore_be.DTO.User;
 
 namespace _8bitstore_be.Interfaces
 {

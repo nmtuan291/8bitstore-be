@@ -1,6 +1,6 @@
 ﻿using System.Linq;
 using _8bitstore_be.Data;
-using _8bitstore_be.DTO;
+using _8bitstore_be.DTO.Product;
 using _8bitstore_be.Interfaces;
 using _8bitstore_be.Models;
 using Microsoft.EntityFrameworkCore;

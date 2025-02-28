@@ -1,6 +1,8 @@
-﻿using _8bitstore_be.DTO;
+﻿using System.Security.Claims;
+using _8bitstore_be.DTO.User;
 using _8bitstore_be.Interfaces;
 using _8bitstore_be.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -49,6 +51,8 @@ namespace _8bitstore_be.Controllers
         [HttpPost("login")]
         public async Task<IActionResult> Login([FromBody] UserLoginDto user)
         {
+            Console.WriteLine("asadasdasd");
+
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
@@ -61,7 +65,7 @@ namespace _8bitstore_be.Controllers
 
             AuthResponseDto response = await _loginService.LoginAsync(user);
 
-            if (response == null)
+            if (response.User == null)
             {
                 return StatusCode(500, "An error occurred during login.");
             }
@@ -72,25 +76,32 @@ namespace _8bitstore_be.Controllers
                 return BadRequest(response.Errors);
             }
 
-            // Set cookies with the access token and refresh token
-            var accessToken = response.User.AccessToken;
-            var refreshToken = response.User.RefreshToken;
-
-            Response.Cookies.Append("AccessToken", accessToken, new CookieOptions
-            {
-                HttpOnly = true,
-                Secure = true,
-                SameSite = SameSiteMode.Strict
-            });
-
-            Response.Cookies.Append("RefreshToken", refreshToken, new CookieOptions
-            {
-                HttpOnly = true,
-                Secure = true,
-                SameSite = SameSiteMode.Strict
-            });
 
             return Ok("Login successful");
+        }
+
+        [Authorize]
+        [HttpGet("get-user")]
+        public async Task<IActionResult> GetUser()
+        {
+            var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value ?? null;
+            Console.WriteLine(userId);
+
+            if (!ModelState.IsValid || userId == null)
+            {
+                Console.WriteLine("asadasdasd");
+                return BadRequest("Missing username");
+            }
+
+            var user = await _loginService.GetUserAsync(userId);
+
+            if (user == null)
+            {
+                Console.WriteLine("dfsfsdfsdfdsff");
+                return NotFound("Cannot find the user");
+            }
+
+            return Ok(user);
         }
     }
 }

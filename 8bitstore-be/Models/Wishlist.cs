@@ -9,13 +9,13 @@ namespace _8bitstore_be.Models
         public string Id { get; set; }
 
         [Required]
-        public string UserId { get; set; }
-
-        [Required]
-        public ICollection<string> ProductId { get; set; }
+        public ICollection<Product> Products { get; set; }
 
         [ForeignKey("UserId")]
-        [Required]
         public User User { get; set; }
+
+        [Required]
+        public string UserId { get; set; }
+
     }
 }

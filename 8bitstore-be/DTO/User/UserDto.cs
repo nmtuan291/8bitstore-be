@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace _8bitstore_be.DTO
+namespace _8bitstore_be.DTO.User
 {
     public class UserDto
     {
@@ -15,8 +15,5 @@ namespace _8bitstore_be.DTO
 
         [Required]
         public string FullName { get; set; }
-
-        public string AccessToken { get; set; }
-        public string RefreshToken { get; set; }
     }
 }
