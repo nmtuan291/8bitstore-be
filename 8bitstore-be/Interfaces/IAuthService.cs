@@ -6,6 +6,6 @@ namespace _8bitstore_be.Interfaces
     public interface IAuthService
     {
         public Task<string> GenerateAccessToken(User user);
-        public Task<string> GenerateRefreshToken(User user);
+        public string GenerateRefreshToken();
     }
 }

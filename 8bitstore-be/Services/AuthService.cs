@@ -1,5 +1,6 @@
 ﻿using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
+using System.Security.Cryptography;
 using System.Text;
 using _8bitstore_be.DTO;
 using _8bitstore_be.Models;
@@ -29,7 +30,7 @@ namespace _8bitstore_be.Services
 
             var claims = new List<Claim>
             {
-                new Claim(ClaimTypes.NameIdentifier, user.UserName),
+                new Claim(ClaimTypes.NameIdentifier, user.Id),
             };
 
             if (roles != null)
@@ -47,31 +48,12 @@ namespace _8bitstore_be.Services
             return new JwtSecurityTokenHandler().WriteToken(token);
         }
 
-        public async Task<string> GenerateRefreshToken(User user)
+        public string GenerateRefreshToken()
         {
-            var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_config["Jwt:Refresh_Key"]));
-            var credentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256);
+            byte[] randomBytes = new byte[64];
+            RandomNumberGenerator.Fill(randomBytes);
 
-            var roles = await _userManager.GetRolesAsync(user);
-
-            var claims = new List<Claim>
-            {
-                new Claim(ClaimTypes.NameIdentifier, user.UserName),
-            };
-
-            if (roles != null)
-            {
-                claims.AddRange(roles.Select(role => new Claim(ClaimTypes.Role, role)));
-            }
-
-            var token = new JwtSecurityToken(_config["Jwt:Issuer"],
-                _config["Jwt:Audience"],
-                claims,
-                expires: DateTime.Now.AddDays(7),
-                signingCredentials: credentials);
-
-
-            return new JwtSecurityTokenHandler().WriteToken(token);
+            return Convert.ToBase64String(randomBytes);
         }
     }
 }

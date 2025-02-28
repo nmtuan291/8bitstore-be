@@ -1,4 +1,4 @@
-﻿using _8bitstore_be.DTO;
+﻿using _8bitstore_be.DTO.Product;
 using _8bitstore_be.Interfaces;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;

@@ -2,12 +2,12 @@
 using Microsoft.EntityFrameworkCore;
 using _8bitstore_be.Data;
 using _8bitstore_be.Models;
-using _8bitstore_be.DTO;
 using System.IdentityModel.Tokens.Jwt;
 using _8bitstore_be.Interfaces;
 using System.Threading.Tasks;
 using System.Collections.Generic;
 using System.Linq;
+using _8bitstore_be.DTO.User;
 
 namespace _8bitstore_be.Services
 {
@@ -15,13 +15,11 @@ namespace _8bitstore_be.Services
     {
         private readonly SignInManager<User> _signInManager;
         private readonly _8bitstoreContext _context;
-        private readonly IAuthService _authService;
 
-        public LoginService(SignInManager<User> signInManager, _8bitstoreContext context, IAuthService authService)
+        public LoginService(SignInManager<User> signInManager, _8bitstoreContext context)
         {
             _signInManager = signInManager;
             _context = context;
-            _authService = authService;
         }
 
         public async Task<AuthResponseDto> LoginAsync(UserLoginDto user)
@@ -55,8 +53,8 @@ namespace _8bitstore_be.Services
                 };
             }
 
-            string accessToken = await _authService.GenerateAccessToken(findUser);
-            string refreshToken = await _authService.GenerateRefreshToken(findUser);
+            /*string accessToken = await _authService.GenerateAccessToken(findUser);
+            string refreshToken = _authService.GenerateRefreshToken();*/
 
             return new AuthResponseDto
             {
@@ -66,11 +64,23 @@ namespace _8bitstore_be.Services
                     UserName = findUser.UserName,
                     Email = findUser.Email,
                     Address = findUser.Address,
-                    FullName = findUser.FullName,
-                    AccessToken = accessToken,
-                    RefreshToken = refreshToken,
+                    FullName = findUser.FullName
                 }
             };
+        }
+
+        public async Task<UserDto?> GetUserAsync(string userId)
+        {
+           return await _context.Users
+                .Where(user => user.Id == userId)
+                .Select(user => new UserDto
+                {
+                    UserName = user.UserName,
+                    Address = user.Address,
+                    FullName = user.FullName,
+                    Email = user.Email
+                })
+                .SingleOrDefaultAsync();
         }
     }
 }

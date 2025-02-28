@@ -1,7 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using Microsoft.AspNetCore.Mvc;
 
-namespace _8bitstore_be.DTO
+namespace _8bitstore_be.DTO.User
 {
     public class UserForRegistrationDto
     {
