@@ -47,15 +47,16 @@ namespace _8bitstore_be.Controllers
             {
                 return BadRequest("Product Id is missing.");
             }
-            
-            var product = await _productService.GetProductAsync(request.ProductId);
 
-            if (product == null)
+            try
             {
-                return NotFound("Cannot find product.");
+                var product = await _productService.GetProductAsync(request.ProductId);
+                return Ok(product);
             }
-
-            return Ok(product);
+            catch (KeyNotFoundException ex)
+            {
+                return BadRequest(ex.Message);
+            }
         }
     }
 }

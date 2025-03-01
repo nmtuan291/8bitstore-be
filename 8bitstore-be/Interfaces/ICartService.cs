@@ -4,7 +4,8 @@ namespace _8bitstore_be.Interfaces
 {
     public interface ICartService
     {
-        public Task<bool> AddItemAsync(string userId, string productId, int quantity);
+        public Task AddItemAsync(string userId, string productId, int quantity);
         public Task<CartDto> GetCartAsync(string userId);
+        public Task DeleteItemAsync(string userId, string productId);
     }
 }
