@@ -11,3 +11,4 @@ namespace _8bitstore_be.DTO.Cart
         public int Quantity { get; set; }
     }
 }
+    

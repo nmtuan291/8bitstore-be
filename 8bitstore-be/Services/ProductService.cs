@@ -56,7 +56,7 @@ namespace _8bitstore_be.Services
             return productDtos;
         }
 
-        public async Task<ProductDto?> GetProductAsync(string productId)
+        public async Task<ProductDto> GetProductAsync(string productId)
         {
             var product = await (from p in _context.Products
                                  where p.ProductID == productId
@@ -64,7 +64,7 @@ namespace _8bitstore_be.Services
 
             if (product == null)
             {
-                return null;
+                throw new KeyNotFoundException("The product cannot be found");
             }
 
             return new ProductDto

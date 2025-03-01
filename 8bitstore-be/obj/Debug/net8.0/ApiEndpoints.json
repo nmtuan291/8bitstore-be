@@ -17,6 +17,22 @@
   },
   {
     "ContainingType": "_8bitstore_be.Controllers.CartController",
+    "Method": "DeleteItem",
+    "RelativePath": "api/Cart/delete-item",
+    "HttpMethod": "DELETE",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "productId",
+        "Type": "System.String",
+        "IsRequired": false
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "_8bitstore_be.Controllers.CartController",
     "Method": "GetCart",
     "RelativePath": "api/Cart/get-cart",
     "HttpMethod": "GET",

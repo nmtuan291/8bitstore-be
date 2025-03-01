@@ -1,4 +1,5 @@
-﻿using System.Security.Claims;
+﻿using System.Diagnostics;
+using System.Security.Claims;
 using _8bitstore_be.DTO.Cart;
 using _8bitstore_be.Interfaces;
 using Microsoft.AspNetCore.Authorization;
@@ -33,14 +34,37 @@ namespace _8bitstore_be.Controllers
                 return BadRequest("User or product Id is missing.");
             }
 
-            bool response = await _cartService.AddItemAsync(userId, request.ProductId, request.Quantity);
-
-            if (!response)
+            try
             {
-                return NotFound("Cannot find product");
+                await _cartService.AddItemAsync(userId, request.ProductId, request.Quantity);
+                return Ok("Add item to cart successfully");
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+           
+        }
+
+        [HttpDelete("delete-item")]
+        public async Task<IActionResult> DeleteItem([FromQuery] string productId)
+        {
+            var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value ?? null;
+
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
             }
 
-            return Ok("Add item to cart successfully");
+            try
+            {
+                await _cartService.DeleteItemAsync(userId, productId);
+                return Ok();
+            }
+            catch (Exception ex)
+            {
+                return NotFound(ex.Message);
+            }
         }
 
         [Authorize]
@@ -55,14 +79,15 @@ namespace _8bitstore_be.Controllers
                 return BadRequest("User ID is missing");
             }
 
-            CartDto? cart = await _cartService.GetCartAsync(userId);
-
-            if (cart == null)
+            try
             {
-                return NotFound("Cannot find cart");
+                CartDto cart = await _cartService.GetCartAsync(userId);
+                return Ok(cart);
             }
-
-            return Ok(cart);
+            catch (KeyNotFoundException ex)
+            {
+                return NotFound(ex.Message);
+            }
         }
     }
 }

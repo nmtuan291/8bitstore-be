@@ -15,15 +15,8 @@ namespace _8bitstore_be.Services
             _context = context;
         }
 
-        public async Task<bool> AddItemAsync(string userId, string productId, int quantity)
+        public async Task AddItemAsync(string userId, string productId, int quantity)
         {
-            var product = await _context.Products.FindAsync(productId);
-
-            if (product == null)
-            {
-                return false;
-            }
-
             var cart = await _context.Carts
                 .Include(c => c.CartItems)
                 .SingleOrDefaultAsync(c => c.UserId == userId);
@@ -58,63 +51,34 @@ namespace _8bitstore_be.Services
             }
 
             await _context.SaveChangesAsync();
+        }
+        
+        public async Task DeleteItemAsync(string userId, string productId)
+        {
+            var cart = await _context.Carts
+                .Where(c => c.UserId == userId)
+                .Include(c => c.CartItems)
+                .SingleOrDefaultAsync();
 
-            return true;
+            if (cart == null)
+            {
+                throw new KeyNotFoundException($"Cart was not found");
+            }
+
+            var itemToRemove = cart.CartItems
+                .Where(ci => ci.ProductId == productId)
+                .SingleOrDefault();
+
+            if (itemToRemove == null)
+            {
+                throw new KeyNotFoundException("Item not found in ther cart");
+            }
+            cart.CartItems.Remove(itemToRemove);
+
+            await _context.SaveChangesAsync();
         }
 
-        /*        public async Task<bool> AddItemAsync(string userId, CartDto cartDto)
-                {
-                    var user = await _context.Users.FindAsync(userId);
-
-                    if (user == null)
-                    {
-                        return false;
-                    }
-
-                    var cart = await _context.Carts
-                        .Include(c => c.CartItems)
-                        .SingleOrDefaultAsync(c => c.UserId == userId);
-
-                    if (cart == null)
-                    {
-                        cart = new Cart
-                        {
-                            UserId = userId,
-                            Id = Guid.NewGuid().ToString(),
-                            CartItems = cartDto.CartItems.Select(ci => new CartItem
-                            {
-                                ProductId = ci.ProductId,
-                                CartId = ci.CartId
-                            })
-                        };
-
-                        await _context.Carts.AddAsync(cart);
-                    }
-
-                    var cartItem = cart.CartItems.FirstOrDefault(item => item.ProductId == productId);
-
-                    if (cartItem == null)
-                    {
-                        cart.CartItems.Add(new CartItem
-                        {
-                            Id = Guid.NewGuid().ToString(),
-                            ProductId = productId,
-                            CartId = cart.Id,
-                            Quantity = quantity
-                        });
-                    }
-                    else
-                    {
-                        cartItem.Quantity = quantity;
-                    }
-
-                    await _context.SaveChangesAsync();
-
-                    return true;
-                }*/
-
-
-        public async Task<CartDto?> GetCartAsync(string userId)
+        public async Task<CartDto> GetCartAsync(string userId)
         {
             var cart = await _context.Carts
                 .Include(c => c.CartItems)
@@ -123,7 +87,7 @@ namespace _8bitstore_be.Services
 
             if (cart == null)
             {
-                return null;
+                throw new KeyNotFoundException("Cart with the user ID cannot be found");
             }
 
             return new CartDto
