@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using _8bitstore_be.Data;
@@ -11,9 +12,11 @@ using _8bitstore_be.Data;
 namespace _8bitstore_be.Migrations
 {
     [DbContext(typeof(_8bitstoreContext))]
-    partial class _8bitstoreContextModelSnapshot : ModelSnapshot
+    [Migration("20250302153833_UpdateDatabase3")]
+    partial class UpdateDatabase3
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -246,49 +249,6 @@ namespace _8bitstore_be.Migrations
                     b.ToTable("OrderItems");
                 });
 
-            modelBuilder.Entity("_8bitstore_be.Models.PaymentVnPay", b =>
-                {
-                    b.Property<string>("Id")
-                        .HasColumnType("text");
-
-                    b.Property<string>("BankCode")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<string>("BankTranNo")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<string>("CardType")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<DateTime>("PayDate")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<string>("PaymentType")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<string>("ResponseCode")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<string>("TransactionNo")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<string>("UserId")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("UserId");
-
-                    b.ToTable("PaymentVnPays");
-                });
-
             modelBuilder.Entity("_8bitstore_be.Models.Product", b =>
                 {
                     b.Property<string>("ProductID")
@@ -379,9 +339,11 @@ namespace _8bitstore_be.Migrations
                         .HasColumnType("integer");
 
                     b.Property<string>("Address")
+                        .IsRequired()
                         .HasColumnType("text");
 
                     b.Property<string>("City")
+                        .IsRequired()
                         .HasColumnType("text");
 
                     b.Property<string>("ConcurrencyStamp")
@@ -389,6 +351,7 @@ namespace _8bitstore_be.Migrations
                         .HasColumnType("text");
 
                     b.Property<string>("District")
+                        .IsRequired()
                         .HasColumnType("text");
 
                     b.Property<string>("Email")
@@ -426,9 +389,6 @@ namespace _8bitstore_be.Migrations
                         .HasColumnType("boolean");
 
                     b.Property<string>("SecurityStamp")
-                        .HasColumnType("text");
-
-                    b.Property<string>("SubDistrict")
                         .HasColumnType("text");
 
                     b.Property<bool>("TwoFactorEnabled")
@@ -575,17 +535,6 @@ namespace _8bitstore_be.Migrations
                     b.Navigation("Order");
 
                     b.Navigation("Product");
-                });
-
-            modelBuilder.Entity("_8bitstore_be.Models.PaymentVnPay", b =>
-                {
-                    b.HasOne("_8bitstore_be.Models.User", "User")
-                        .WithMany()
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("_8bitstore_be.Models.Product", b =>

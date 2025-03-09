@@ -20,9 +20,9 @@ namespace _8bitstore_be.Services
             User user = new User
             {
                 FullName = userInfo.FullName,
-                Address = userInfo.Address,
                 UserName = userInfo.UserName,
-                Email = userInfo.Email
+                Email = userInfo.Email,
+                PhoneNumber = userInfo.PhoneNumber
             };
 
             var result = await _userManager.CreateAsync(user, userInfo.Password);

@@ -42,6 +42,32 @@
     "ReturnTypes": []
   },
   {
+    "ContainingType": "_8bitstore_be.Controllers.PaymentController",
+    "Method": "CreatePaymentUrlVnpay",
+    "RelativePath": "api/Payment/create-url",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "_8bitstore_be.Controllers.PaymentController",
+    "Method": "SavePayment",
+    "RelativePath": "api/Payment/save-payment-info",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "request",
+        "Type": "_8bitstore_be.DTO.Payment.VnPayResultDto",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
     "ContainingType": "_8bitstore_be.Controllers.ProductController",
     "Method": "GetProduct",
     "RelativePath": "api/Product/get-product",
