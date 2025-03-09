@@ -64,7 +64,10 @@ namespace _8bitstore_be.Services
                     UserName = findUser.UserName,
                     Email = findUser.Email,
                     Address = findUser.Address,
-                    FullName = findUser.FullName
+                    FullName = findUser.FullName,
+                    City = findUser.City,
+                    District = findUser.District,
+                    PhoneNumber = findUser.PhoneNumber
                 }
             };
         }

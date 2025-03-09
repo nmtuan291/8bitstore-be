@@ -69,6 +69,49 @@
         }
       }
     },
+    "/api/Payment/create-url": {
+      "post": {
+        "tags": [
+          "Payment"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/Payment/save-payment-info": {
+      "post": {
+        "tags": [
+          "Payment"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/VnPayResultDto"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/VnPayResultDto"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/VnPayResultDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
     "/api/Product/get-products": {
       "get": {
         "tags": [
@@ -297,6 +340,7 @@
         "required": [
           "email",
           "password",
+          "phoneNumber",
           "userName"
         ],
         "type": "object",
@@ -314,10 +358,6 @@
             "type": "string",
             "nullable": true
           },
-          "address": {
-            "type": "string",
-            "nullable": true
-          },
           "password": {
             "minLength": 1,
             "type": "string"
@@ -325,6 +365,10 @@
           "confirmPassword": {
             "type": "string",
             "nullable": true
+          },
+          "phoneNumber": {
+            "minLength": 1,
+            "type": "string"
           }
         },
         "additionalProperties": false
@@ -341,6 +385,49 @@
             "type": "string"
           },
           "password": {
+            "minLength": 1,
+            "type": "string"
+          }
+        },
+        "additionalProperties": false
+      },
+      "VnPayResultDto": {
+        "required": [
+          "bankCode",
+          "bankTranNo",
+          "cardType",
+          "payDate",
+          "responseCode",
+          "transactionNo",
+          "userId"
+        ],
+        "type": "object",
+        "properties": {
+          "userId": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "transactionNo": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "bankCode": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "bankTranNo": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "cardType": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "payDate": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "responseCode": {
             "minLength": 1,
             "type": "string"
           }
