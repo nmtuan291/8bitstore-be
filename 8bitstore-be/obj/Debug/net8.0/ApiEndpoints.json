@@ -42,10 +42,73 @@
     "ReturnTypes": []
   },
   {
-    "ContainingType": "_8bitstore_be.Controllers.PaymentController",
-    "Method": "CreatePaymentUrlVnpay",
-    "RelativePath": "api/Payment/create-url",
+    "ContainingType": "_8bitstore_be.Controllers.EmailController",
+    "Method": "SendEmail",
+    "RelativePath": "api/Email/send",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "toEmail",
+        "Type": "System.String",
+        "IsRequired": false
+      },
+      {
+        "Name": "subject",
+        "Type": "System.String",
+        "IsRequired": false
+      },
+      {
+        "Name": "body",
+        "Type": "System.String",
+        "IsRequired": false
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "_8bitstore_be.Controllers.OrderController",
+    "Method": "ChangeStatus",
+    "RelativePath": "api/Order/change-status/{orderId}",
+    "HttpMethod": "PATCH",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "orderId",
+        "Type": "System.String",
+        "IsRequired": true
+      },
+      {
+        "Name": "status",
+        "Type": "System.String",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "_8bitstore_be.Controllers.OrderController",
+    "Method": "CreateOrder",
+    "RelativePath": "api/Order/create-order",
     "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "order",
+        "Type": "_8bitstore_be.DTO.Order.OrderDto",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "_8bitstore_be.Controllers.OrderController",
+    "Method": "GetOrders",
+    "RelativePath": "api/Order/get-orders",
+    "HttpMethod": "GET",
     "IsController": true,
     "Order": 0,
     "Parameters": [],
@@ -53,7 +116,23 @@
   },
   {
     "ContainingType": "_8bitstore_be.Controllers.PaymentController",
-    "Method": "SavePayment",
+    "Method": "CreatePaymentUrlVnpay",
+    "RelativePath": "api/Payment/create-url",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "request",
+        "Type": "_8bitstore_be.DTO.Payment.PaymentRequest",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "_8bitstore_be.Controllers.PaymentController",
+    "Method": "SavePaymentVnPay",
     "RelativePath": "api/Payment/save-payment-info",
     "HttpMethod": "POST",
     "IsController": true,
@@ -62,6 +141,22 @@
       {
         "Name": "request",
         "Type": "_8bitstore_be.DTO.Payment.VnPayResultDto",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "_8bitstore_be.Controllers.ProductController",
+    "Method": "AddProduct",
+    "RelativePath": "api/Product/add-product",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "product",
+        "Type": "_8bitstore_be.DTO.Product.ProductDto",
         "IsRequired": true
       }
     ],
@@ -81,6 +176,11 @@
         "IsRequired": false
       },
       {
+        "Name": "ProductName",
+        "Type": "System.String",
+        "IsRequired": false
+      },
+      {
         "Name": "SortByName",
         "Type": "System.Nullable\u00601[[System.Int32, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]",
         "IsRequired": false
@@ -93,6 +193,36 @@
       {
         "Name": "SortByDate",
         "Type": "System.Nullable\u00601[[System.Int32, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]",
+        "IsRequired": false
+      },
+      {
+        "Name": "MaxPrice",
+        "Type": "System.Nullable\u00601[[System.Decimal, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]",
+        "IsRequired": false
+      },
+      {
+        "Name": "MinPrice",
+        "Type": "System.Nullable\u00601[[System.Decimal, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]",
+        "IsRequired": false
+      },
+      {
+        "Name": "Manufacturer",
+        "Type": "System.Collections.Generic.ICollection\u00601[[System.String, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]",
+        "IsRequired": false
+      },
+      {
+        "Name": "Genres",
+        "Type": "System.Collections.Generic.ICollection\u00601[[System.String, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]",
+        "IsRequired": false
+      },
+      {
+        "Name": "Type",
+        "Type": "System.Collections.Generic.ICollection\u00601[[System.String, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]",
+        "IsRequired": false
+      },
+      {
+        "Name": "Platforms",
+        "Type": "System.Collections.Generic.ICollection\u00601[[System.String, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]",
         "IsRequired": false
       }
     ],
@@ -112,6 +242,11 @@
         "IsRequired": false
       },
       {
+        "Name": "ProductName",
+        "Type": "System.String",
+        "IsRequired": false
+      },
+      {
         "Name": "SortByName",
         "Type": "System.Nullable\u00601[[System.Int32, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]",
         "IsRequired": false
@@ -124,6 +259,84 @@
       {
         "Name": "SortByDate",
         "Type": "System.Nullable\u00601[[System.Int32, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]",
+        "IsRequired": false
+      },
+      {
+        "Name": "MaxPrice",
+        "Type": "System.Nullable\u00601[[System.Decimal, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]",
+        "IsRequired": false
+      },
+      {
+        "Name": "MinPrice",
+        "Type": "System.Nullable\u00601[[System.Decimal, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]",
+        "IsRequired": false
+      },
+      {
+        "Name": "Manufacturer",
+        "Type": "System.Collections.Generic.ICollection\u00601[[System.String, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]",
+        "IsRequired": false
+      },
+      {
+        "Name": "Genres",
+        "Type": "System.Collections.Generic.ICollection\u00601[[System.String, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]",
+        "IsRequired": false
+      },
+      {
+        "Name": "Type",
+        "Type": "System.Collections.Generic.ICollection\u00601[[System.String, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]",
+        "IsRequired": false
+      },
+      {
+        "Name": "Platforms",
+        "Type": "System.Collections.Generic.ICollection\u00601[[System.String, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]",
+        "IsRequired": false
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "_8bitstore_be.Controllers.ProductController",
+    "Method": "GetSuggestion",
+    "RelativePath": "api/Product/get-suggestion",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "query",
+        "Type": "System.String",
+        "IsRequired": false
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "_8bitstore_be.Controllers.ReviewController",
+    "Method": "AddReview",
+    "RelativePath": "api/Review/add-review",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "request",
+        "Type": "_8bitstore_be.DTO.Review.ReviewDto",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "_8bitstore_be.Controllers.ReviewController",
+    "Method": "GetReviews",
+    "RelativePath": "api/Review/get-reviews",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "productId",
+        "Type": "System.String",
         "IsRequired": false
       }
     ],
@@ -157,6 +370,16 @@
   },
   {
     "ContainingType": "_8bitstore_be.Controllers.UserController",
+    "Method": "Logout",
+    "RelativePath": "api/User/logout",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "_8bitstore_be.Controllers.UserController",
     "Method": "SignUp",
     "RelativePath": "api/User/signup",
     "HttpMethod": "POST",
@@ -167,6 +390,64 @@
         "Name": "user",
         "Type": "_8bitstore_be.DTO.User.UserForRegistrationDto",
         "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "_8bitstore_be.Controllers.UserController",
+    "Method": "UpdateAddress",
+    "RelativePath": "api/User/update-address",
+    "HttpMethod": "PATCH",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "request",
+        "Type": "_8bitstore_be.DTO.User.UserDto",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "_8bitstore_be.Controllers.WishlistController",
+    "Method": "AddItem",
+    "RelativePath": "api/Wishlist/add-item",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "productId",
+        "Type": "System.String",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "_8bitstore_be.Controllers.WishlistController",
+    "Method": "GetWishlist",
+    "RelativePath": "api/Wishlist/get-wishlist",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "_8bitstore_be.Controllers.WishlistController",
+    "Method": "RemoveItem",
+    "RelativePath": "api/Wishlist/remove-item",
+    "HttpMethod": "DELETE",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "productId",
+        "Type": "System.String",
+        "IsRequired": false
       }
     ],
     "ReturnTypes": []

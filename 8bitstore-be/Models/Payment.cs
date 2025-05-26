@@ -18,5 +18,11 @@ namespace _8bitstore_be.Models
          
         [Required]
         public string PaymentType { get; set; }
+
+        [Required]
+        public string OrderId { get; set; }
+
+        [Required]
+        public string Status { get; set; }
     }
 }

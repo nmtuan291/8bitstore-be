@@ -210,6 +210,9 @@ namespace _8bitstore_be.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
+                    b.Property<decimal>("Total")
+                        .HasColumnType("numeric");
+
                     b.Property<string>("UserId")
                         .IsRequired()
                         .HasColumnType("text");
@@ -237,6 +240,9 @@ namespace _8bitstore_be.Migrations
                     b.Property<int>("Quantity")
                         .HasColumnType("integer");
 
+                    b.Property<decimal>("UnitPrice")
+                        .HasColumnType("numeric");
+
                     b.HasKey("Id");
 
                     b.HasIndex("OrderId");
@@ -246,35 +252,25 @@ namespace _8bitstore_be.Migrations
                     b.ToTable("OrderItems");
                 });
 
-            modelBuilder.Entity("_8bitstore_be.Models.PaymentVnPay", b =>
+            modelBuilder.Entity("_8bitstore_be.Models.Payment", b =>
                 {
                     b.Property<string>("Id")
                         .HasColumnType("text");
 
-                    b.Property<string>("BankCode")
+                    b.Property<string>("Discriminator")
+                        .IsRequired()
+                        .HasMaxLength(13)
+                        .HasColumnType("character varying(13)");
+
+                    b.Property<string>("OrderId")
                         .IsRequired()
                         .HasColumnType("text");
-
-                    b.Property<string>("BankTranNo")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<string>("CardType")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<DateTime>("PayDate")
-                        .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("PaymentType")
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<string>("ResponseCode")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<string>("TransactionNo")
+                    b.Property<string>("Status")
                         .IsRequired()
                         .HasColumnType("text");
 
@@ -286,7 +282,11 @@ namespace _8bitstore_be.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("PaymentVnPays");
+                    b.ToTable("Payments");
+
+                    b.HasDiscriminator().HasValue("Payment");
+
+                    b.UseTphMappingStrategy();
                 });
 
             modelBuilder.Entity("_8bitstore_be.Models.Product", b =>
@@ -302,9 +302,9 @@ namespace _8bitstore_be.Migrations
                         .IsRequired()
                         .HasColumnType("text[]");
 
-                    b.Property<string>("ImgUrl")
+                    b.PrimitiveCollection<string[]>("ImgUrl")
                         .IsRequired()
-                        .HasColumnType("text");
+                        .HasColumnType("text[]");
 
                     b.Property<DateTime>("ImportDate")
                         .HasColumnType("timestamp with time zone");
@@ -327,16 +327,11 @@ namespace _8bitstore_be.Migrations
                     b.Property<int>("StockNum")
                         .HasColumnType("integer");
 
-                    b.PrimitiveCollection<string[]>("Type")
+                    b.Property<string>("Type")
                         .IsRequired()
-                        .HasColumnType("text[]");
-
-                    b.Property<string>("WishlistId")
                         .HasColumnType("text");
 
                     b.HasKey("ProductID");
-
-                    b.HasIndex("WishlistId");
 
                     b.ToTable("Products");
                 });
@@ -353,6 +348,9 @@ namespace _8bitstore_be.Migrations
                     b.Property<string>("ProductId")
                         .IsRequired()
                         .HasColumnType("text");
+
+                    b.Property<DateTime>("ReviewDate")
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<int>("Score")
                         .HasColumnType("integer");
@@ -466,6 +464,58 @@ namespace _8bitstore_be.Migrations
                     b.ToTable("Wishlists");
                 });
 
+            modelBuilder.Entity("_8bitstore_be.Models.WishlistItem", b =>
+                {
+                    b.Property<string>("Id")
+                        .HasColumnType("text");
+
+                    b.Property<string>("ProductId")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("WishlistId")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ProductId");
+
+                    b.HasIndex("WishlistId");
+
+                    b.ToTable("WishlistItems");
+                });
+
+            modelBuilder.Entity("_8bitstore_be.Models.PaymentVnPay", b =>
+                {
+                    b.HasBaseType("_8bitstore_be.Models.Payment");
+
+                    b.Property<string>("BankCode")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("BankTranNo")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("CardType")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<DateTime>("PayDate")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("ResponseCode")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("TransactionNo")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.HasDiscriminator().HasValue("PaymentVnPay");
+                });
+
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
                 {
                     b.HasOne("Microsoft.AspNetCore.Identity.IdentityRole", null)
@@ -577,7 +627,7 @@ namespace _8bitstore_be.Migrations
                     b.Navigation("Product");
                 });
 
-            modelBuilder.Entity("_8bitstore_be.Models.PaymentVnPay", b =>
+            modelBuilder.Entity("_8bitstore_be.Models.Payment", b =>
                 {
                     b.HasOne("_8bitstore_be.Models.User", "User")
                         .WithMany()
@@ -586,13 +636,6 @@ namespace _8bitstore_be.Migrations
                         .IsRequired();
 
                     b.Navigation("User");
-                });
-
-            modelBuilder.Entity("_8bitstore_be.Models.Product", b =>
-                {
-                    b.HasOne("_8bitstore_be.Models.Wishlist", null)
-                        .WithMany("Products")
-                        .HasForeignKey("WishlistId");
                 });
 
             modelBuilder.Entity("_8bitstore_be.Models.Review", b =>
@@ -623,6 +666,25 @@ namespace _8bitstore_be.Migrations
                         .IsRequired();
 
                     b.Navigation("User");
+                });
+
+            modelBuilder.Entity("_8bitstore_be.Models.WishlistItem", b =>
+                {
+                    b.HasOne("_8bitstore_be.Models.Product", "Product")
+                        .WithMany()
+                        .HasForeignKey("ProductId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("_8bitstore_be.Models.Wishlist", "Wishlist")
+                        .WithMany("Products")
+                        .HasForeignKey("WishlistId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Product");
+
+                    b.Navigation("Wishlist");
                 });
 
             modelBuilder.Entity("_8bitstore_be.Models.Cart", b =>

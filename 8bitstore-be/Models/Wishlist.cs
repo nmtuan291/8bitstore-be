@@ -9,7 +9,7 @@ namespace _8bitstore_be.Models
         public string Id { get; set; }
 
         [Required]
-        public ICollection<Product> Products { get; set; }
+        public ICollection<WishlistItem> Products { get; set; }
 
         [ForeignKey("UserId")]
         public User User { get; set; }

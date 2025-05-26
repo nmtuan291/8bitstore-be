@@ -8,13 +8,16 @@ namespace _8bitstore_be.Models
         [Key]
         public string Id { get; set; }
 
+        [Required]
+        public string ProductId { get; set; }
+
         [ForeignKey("ProductId")]
         public Product Product { get; set; }
 
         [Required]
-        public string ProductId { get; set; }
-
         public int Score { get; set; }
+
+        [Required]
         public string Comment { get; set; }
 
         [ForeignKey("UserId")]
@@ -22,5 +25,8 @@ namespace _8bitstore_be.Models
 
         [Required]
         public string UserId { get; set; }
+
+        [Required]
+        public DateTime ReviewDate { get; set; }
     }
 }

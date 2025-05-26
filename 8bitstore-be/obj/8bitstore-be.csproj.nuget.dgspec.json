@@ -50,6 +50,10 @@
         "net8.0": {
           "targetAlias": "net8.0",
           "dependencies": {
+            "MailKit": {
+              "target": "Package",
+              "version": "[4.11.0, )"
+            },
             "Microsoft.AspNetCore.Authentication.JwtBearer": {
               "target": "Package",
               "version": "[8.0.13, )"
@@ -75,6 +79,18 @@
             "Microsoft.IdentityModel.Tokens": {
               "target": "Package",
               "version": "[8.5.0, )"
+            },
+            "MimeKit": {
+              "target": "Package",
+              "version": "[4.11.0, )"
+            },
+            "NEST": {
+              "target": "Package",
+              "version": "[7.17.5, )"
+            },
+            "Neo4j.Driver": {
+              "target": "Package",
+              "version": "[5.27.0, )"
             },
             "Npgsql.EntityFrameworkCore.PostgreSQL": {
               "target": "Package",

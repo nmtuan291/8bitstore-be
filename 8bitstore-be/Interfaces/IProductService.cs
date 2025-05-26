@@ -5,7 +5,9 @@ namespace _8bitstore_be.Interfaces
 {
     public interface IProductService
     {
-        public Task<IEnumerable<ProductDto>> GetProductsAsync(int? sortByName, int? sortByPrice, int? sortByDate);
+        public Task<IEnumerable<ProductDto>> GetProductsAsync(ProductRequest request);
         public Task<ProductDto?> GetProductAsync(string productId);
+        public Task AddProductAsync(ProductDto product);
+        public Task<IEnumerable<string>> GetSuggestionAsync(string query);
     }
 }

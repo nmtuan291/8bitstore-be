@@ -85,5 +85,10 @@ namespace _8bitstore_be.Services
                 })
                 .SingleOrDefaultAsync();
         }
+
+        public async Task LogoutAsync()
+        {
+            await _signInManager.SignOutAsync();
+        }
     }
 }
