@@ -18,6 +18,6 @@ namespace _8bitstore_be.DTO.Cart
         public string ProductName { get; set; }
 
         [Required]
-        public string ImgUrl { get; set; }
+        public ICollection<string> ImgUrl { get; set; }
     }
 }

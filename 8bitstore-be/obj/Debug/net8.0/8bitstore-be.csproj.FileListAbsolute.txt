@@ -157,4 +157,10 @@ C:\Users\Admin\source\repos\8bitstore-be\8bitstore-be\bin\Debug\net8.0\Microsoft
 C:\Users\Admin\source\repos\8bitstore-be\8bitstore-be\bin\Debug\net8.0\Microsoft.IdentityModel.Tokens.dll
 C:\Users\Admin\source\repos\8bitstore-be\8bitstore-be\bin\Debug\net8.0\System.IdentityModel.Tokens.Jwt.dll
 C:\Users\Admin\source\repos\8bitstore-be\8bitstore-be\obj\Debug\net8.0\8bitstore-be.sourcelink.json
+C:\Users\Admin\source\repos\8bitstore-be\8bitstore-be\bin\Debug\net8.0\Elasticsearch.Net.dll
+C:\Users\Admin\source\repos\8bitstore-be\8bitstore-be\bin\Debug\net8.0\Neo4j.Driver.dll
+C:\Users\Admin\source\repos\8bitstore-be\8bitstore-be\bin\Debug\net8.0\Nest.dll
+C:\Users\Admin\source\repos\8bitstore-be\8bitstore-be\bin\Debug\net8.0\BouncyCastle.Cryptography.dll
+C:\Users\Admin\source\repos\8bitstore-be\8bitstore-be\bin\Debug\net8.0\MailKit.dll
+C:\Users\Admin\source\repos\8bitstore-be\8bitstore-be\bin\Debug\net8.0\MimeKit.dll
 C:\Users\Admin\source\repos\8bitstore-be\8bitstore-be\obj\Debug\net8.0\staticwebassets.upToDateCheck.txt

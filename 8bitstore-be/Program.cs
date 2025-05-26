@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
+using Neo4j.Driver;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -35,6 +36,9 @@ builder.Services.AddCors(options =>
     });
 });
 
+// Neo4j
+var neo4jConfig = builder.Configuration.GetSection("Neo4j");
+var driver = GraphDatabase.Driver(neo4jConfig["uri"], AuthTokens.Basic(neo4jConfig["user"], neo4jConfig["password"]));
 
 
 builder.Services.AddControllers();
@@ -44,13 +48,15 @@ builder.Services.AddSwaggerGen();
 
 builder.Services.AddDbContext<_8bitstoreContext>(options => options.UseNpgsql(builder.Configuration.GetConnectionString("WebApiDatabase")));
 builder.Services.AddIdentity<User, IdentityRole>()
-                .AddEntityFrameworkStores<_8bitstoreContext>();
+                .AddEntityFrameworkStores<_8bitstoreContext>()
+                .AddDefaultTokenProviders();
 
 builder.Services.Configure<IdentityOptions>(options =>
 {
     options.User.RequireUniqueEmail = true;
 });
 
+builder.Services.AddSingleton<IDriver>(driver);
 builder.Services.AddSingleton<IConfiguration>(builder.Configuration);
 builder.Services.AddScoped<IRegistrationService, RegistrationService>();
 builder.Services.AddScoped<ILoginService, LoginService>();
@@ -58,6 +64,11 @@ builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<IProductService, ProductService>();
 builder.Services.AddScoped<ICartService, CartService>();
 builder.Services.AddScoped<IVnPayService, VnPayService>();
+builder.Services.AddScoped<IWishlistService, WishlistService>();
+builder.Services.AddScoped<IUserService, UserService>();
+builder.Services.AddScoped<IOrderService, OrderService>();
+builder.Services.AddScoped<IEmailService, EmailService>();
+builder.Services.AddScoped<IReviewService, ReviewService>();
 
 var app = builder.Build();
 app.UseCors("AllowFrontend");

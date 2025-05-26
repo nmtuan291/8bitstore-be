@@ -22,6 +22,9 @@ namespace _8bitstore_be.Models
         [Required]
         public string Status { get; set; }
 
+        [Required]
+        public decimal Total {  get; set; }
+
         public ICollection<OrderProduct> OrderProducts { get; set; }
 
     }

@@ -18,7 +18,7 @@ namespace _8bitstore_be.Models
         public string Manufacturer { get; set; }
 
         public ICollection<string> Platform { get; set; }
-        public ICollection<string> Type { get; set; }
+        public string Type { get; set; }
         public ICollection<string> Genre { get; set; }
 
         [Required]
@@ -27,7 +27,7 @@ namespace _8bitstore_be.Models
         [Required]
         public string ProductName { get; set; }
 
-        public string ImgUrl { get; set; }
+        public ICollection<string> ImgUrl { get; set; }
 
         [Required]
         public DateTime ImportDate { get; set; }

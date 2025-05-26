@@ -20,17 +20,17 @@ namespace _8bitstore_be.Controllers
         [HttpGet("get-products")]
         public async Task<IActionResult> GetProducts([FromQuery] ProductRequest request)
         {
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(ModelState);
-            }
-
             if (request == null)
             {
                 return BadRequest("Request is empty");
             }
 
-            var products = await _productService.GetProductsAsync(request.SortByName, request.SortByPrice, request.SortByDate);
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            var products = await _productService.GetProductsAsync(request);
 
             return Ok(products);          
         }
@@ -58,5 +58,39 @@ namespace _8bitstore_be.Controllers
                 return BadRequest(ex.Message);
             }
         }
+
+        [HttpPost("add-product")]
+        public async Task<IActionResult> AddProduct([FromBody] ProductDto product)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            try
+            {
+                await _productService.AddProductAsync(product);
+                return Ok("Add product successfully");
+            }
+            catch(Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
+        }
+
+        [HttpGet("get-suggestion")]
+        public async Task<IActionResult> GetSuggestion([FromQuery] string query)
+        {
+            try
+            {
+                IEnumerable<string> productNames = await _productService.GetSuggestionAsync(query);
+                return Ok(productNames);
+            }
+            catch(Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
+        }
+
     }
 }

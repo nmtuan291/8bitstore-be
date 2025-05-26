@@ -28,6 +28,25 @@ namespace _8bitstore_be.Libraries
             }
         }
 
+/*        public string GetRawDataForHash()
+        {
+            var data = new StringBuilder();
+            var keysToSkip = new[] { "vnp_SecureHash", "vnp_SecureHashType" };
+
+            foreach (var kv in _responseData)
+            {
+                if (!keysToSkip.Contains(kv.Key) && !string.IsNullOrEmpty(kv.Value))
+                {
+                    data.Append(WebUtility.UrlEncode(kv.Key) + "=" + WebUtility.UrlEncode(kv.Value) + "&");
+                }
+            }
+
+            if (data.Length > 0)
+                data.Remove(data.Length - 1, 1); // Remove last &
+
+            return data.ToString();
+        }
+*/
         public string GetResponseData(string key)
         {
             string retValue;
@@ -70,11 +89,42 @@ namespace _8bitstore_be.Libraries
         {
             string rspRaw = GetResponseData();
             string myChecksum = HashAndGetIP.HmacSHA512(secretKey, rspRaw);
+            Console.WriteLine("Raw: " + rspRaw);
+            Console.WriteLine("Generated: " + myChecksum);
+            Console.WriteLine("Provided:  " + inputHash);
+
             return myChecksum.Equals(inputHash, StringComparison.InvariantCultureIgnoreCase);
         }
-        private string GetResponseData()
+        /*private string GetResponseData()
         {
 
+            StringBuilder data = new StringBuilder();
+            if (_responseData.ContainsKey("vnp_SecureHashType"))
+            {
+                _responseData.Remove("vnp_SecureHashType");
+            }
+            if (_responseData.ContainsKey("vnp_SecureHash"))
+            {
+                _responseData.Remove("vnp_SecureHash");
+            }
+            foreach (KeyValuePair<string, string> kv in _responseData)
+            {
+                if (!String.IsNullOrEmpty(kv.Value))
+                {
+                    *//* data.Append(WebUtility.UrlEncode(kv.Key) + "=" + WebUtility.UrlEncode(kv.Value) + "&");*//*
+                    data.Append(WebUtility.UrlEncode(kv.Key) + "=" + kv.Value + "&");
+                }
+            }
+            //remove last '&'
+            if (data.Length > 0)
+            {
+                data.Remove(data.Length - 1, 1);
+            }
+            return data.ToString();
+        }*/
+
+        private string GetResponseData()
+        {
             StringBuilder data = new StringBuilder();
             if (_responseData.ContainsKey("vnp_SecureHashType"))
             {

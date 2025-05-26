@@ -14,12 +14,16 @@ namespace _8bitstore_be.Models
         [Required]
         public string OrderId { get; set; }
 
+        [ForeignKey("ProductId")]
         public Product Product { get; set; }
-        public string ProductId { get; set; }
 
+        [Required]
+        public string ProductId { get; set; }
 
         [Required]
         public int Quantity { get; set; }
 
+        [Required]
+        public decimal UnitPrice { get; set; }
     }
 }

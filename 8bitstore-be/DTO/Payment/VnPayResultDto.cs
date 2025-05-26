@@ -6,7 +6,13 @@ namespace _8bitstore_be.DTO.Payment
     public class VnPayResultDto
     {
         [Required]
-        public string UserId { get; set; }
+        public string TmnCode { get; set; }
+
+        [Required]
+        public string Amount {  get; set; }
+
+        [Required]
+        public string OrderInfo { get; set; }
 
         [Required]
         public string TransactionNo { get; set; }
@@ -21,9 +27,21 @@ namespace _8bitstore_be.DTO.Payment
         public string CardType { get; set; }
 
         [Required]
-        public DateTime PayDate { get; set; }
+        public string PayDate { get; set; }
 
         [Required]
         public string ResponseCode { get; set; }
+
+        [Required]
+        public string SecureHash { get; set; }
+
+        [Required]
+        public string TxnRef { get; set; }
+
+        [Required]
+        public string TransactionStatus { get; set; }
+
+        [Required]
+        public string OrderId { get; set; }
     }
 }

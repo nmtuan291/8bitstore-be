@@ -20,15 +20,15 @@ namespace _8bitstore_be.Controllers
         }
 
         [HttpPost("create-url")]
-        public IActionResult CreatePaymentUrlVnpay()
+        public IActionResult CreatePaymentUrlVnpay([FromBody] PaymentRequest request)
         {
-            var url = _vnPayService.CreatePaymentUrl(HttpContext);
+            var url = _vnPayService.CreatePaymentUrl(HttpContext, request.Amount);
 
             return Ok(url);
         }
 
         [HttpPost("save-payment-info")]
-        public async Task<IActionResult> SavePayment([FromBody] VnPayResultDto request)
+        public async Task<IActionResult> SavePaymentVnPay([FromBody] VnPayResultDto request)
         {
             if (!ModelState.IsValid)
             {
@@ -38,14 +38,19 @@ namespace _8bitstore_be.Controllers
 
             var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value ?? null;
 
+            if (userId == null)
+            {
+                return BadRequest("User ID cannot be found");
+            }
+
             try
             {
-                await _vnPayService.savePaymentAsync(request, userId);
-                return Ok();
+                StatusResponse<string> response = await _vnPayService.savePaymentAsync(request, userId);
+                return Ok(response);
             }
             catch (Exception ex)
             {
-                return StatusCode(500, "Internal error");
+                return StatusCode(500, ex.Message);
             }
         }
 
