@@ -1,76 +1,52 @@
 ﻿using System.Linq;
 using _8bitstore_be.Data;
 using _8bitstore_be.DTO.Product;
-using _8bitstore_be.Interfaces;
+using _8bitstore_be.Interfaces.Services;
+using _8bitstore_be.Interfaces.Repositories;
 using _8bitstore_be.Models;
 using Microsoft.EntityFrameworkCore;
+using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace _8bitstore_be.Services
 {
-    public class ProductService: IProductService
+    public class ProductService : IProductService
     {
-        private readonly _8bitstoreContext _context;
-        public ProductService(_8bitstoreContext context)
+        private readonly IProductRepository _productRepository;
+
+        public ProductService(IProductRepository productRepository)
         {
-            _context = context;
+            _productRepository = productRepository;
         }
 
         public async Task<IEnumerable<ProductDto>> GetProductsAsync(ProductRequest request)
         {
-            IQueryable<Product> products = _context.Products;
+            var products = await _productRepository.GetAllAsync();
+            var filtered = products.AsQueryable();
+
             if (!string.IsNullOrEmpty(request.ProductName))
-            {
-                products = products.Where(p => p.ProductName == request.ProductName);
-            }
-
+                filtered = filtered.Where(p => p.ProductName == request.ProductName);
             if (request.MinPrice.HasValue)
-            {
-                products = products.Where(p => p.Price >= request.MinPrice);
-            }
-
+                filtered = filtered.Where(p => p.Price >= request.MinPrice);
             if (request.MaxPrice.HasValue)
-            {
-                products = products.Where(p => p.Price <= request.MaxPrice);
-            }
-
+                filtered = filtered.Where(p => p.Price <= request.MaxPrice);
             if (request.Genres != null)
-            {
-                products = products.Where(p => p.Genre.Any(g => request.Genres.Contains(g)));
-            }
-
+                filtered = filtered.Where(p => p.Genre.Any(g => request.Genres.Contains(g)));
             if (request.Manufacturer != null)
-            {
-                products = products.Where(p => request.Manufacturer.Contains(p.Manufacturer));
-            }
-
+                filtered = filtered.Where(p => request.Manufacturer.Contains(p.Manufacturer));
             if (request.Type != null)
-            {
-                products = products.Where(p => request.Type.Contains(p.Type));
-            } 
-
+                filtered = filtered.Where(p => request.Type.Contains(p.Type));
             if (request.Platforms != null)
-            {
-                products = products.Where(p => p.Platform.Any(plaform => request.Platforms.Contains(plaform)));
-            }
-
+                filtered = filtered.Where(p => p.Platform.Any(platform => request.Platforms.Contains(platform)));
             if (request.SortByName.HasValue && request.SortByName != 0)
-            {
-                products = products.OrderBy(p => p.ProductName);
-            }
-
+                filtered = filtered.OrderBy(p => p.ProductName);
             if (request.SortByPrice.HasValue && request.SortByPrice != 0)
-            {
-                products = products.OrderBy(p => p.Price);
-            }
-
+                filtered = filtered.OrderBy(p => p.Price);
             if (request.SortByDate.HasValue && request.SortByDate != 0)
-            {
-                products = products.OrderBy(p => p.ImportDate);
-            }
+                filtered = filtered.OrderBy(p => p.ImportDate);
 
-            List<Product> productList = await products.ToListAsync();
-
-            IEnumerable<ProductDto> productDtos = productList.Select(p => new ProductDto
+            return filtered.Select(p => new ProductDto
             {
                 ProductId = p.ProductID,
                 ProductName = p.ProductName,
@@ -83,22 +59,14 @@ namespace _8bitstore_be.Services
                 ImgUrl = p.ImgUrl,
                 Manufacturer = p.Manufacturer,
                 StockNum = p.StockNum
-            });
-
-            return productDtos;
+            }).ToList();
         }
 
         public async Task<ProductDto> GetProductAsync(string productId)
         {
-            var product = await (from p in _context.Products
-                                 where p.ProductID == productId
-                                 select p).FirstOrDefaultAsync();
-
+            var product = await _productRepository.GetByIdAsync(productId);
             if (product == null)
-            {
                 throw new KeyNotFoundException("The product cannot be found");
-            }
-
             return new ProductDto
             {
                 ProductId = product.ProductID,
@@ -131,20 +99,14 @@ namespace _8bitstore_be.Services
                 ImgUrl = product.ImgUrl,
                 StockNum = product.StockNum,
             };
-
-            await _context.Products.AddAsync(newProduct);
-            await _context.SaveChangesAsync();
+            await _productRepository.AddAsync(newProduct);
+            await _productRepository.SaveChangesAsync();
         }
 
         public async Task<IEnumerable<string>> GetSuggestionAsync(string query)
         {
-            var productNames = await _context.Products
-                   .Where(p => p.ProductName.Contains(query))
-                   .Select(p => p.ProductName)
-                   .Take(10)
-                   .ToListAsync();
-
-            return productNames;
+            var products = await _productRepository.GetProductsByNameAsync(query);
+            return products.Select(p => p.ProductName).Take(10);
         }
     }
 }

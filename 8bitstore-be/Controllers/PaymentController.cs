@@ -4,6 +4,7 @@ using System.Security.Claims;
 using _8bitstore_be.DTO;
 using _8bitstore_be.Interfaces;
 using _8bitstore_be.DTO.Payment;
+using _8bitstore_be.Interfaces.Services;
 using _8bitstore_be.Services;
 
 namespace _8bitstore_be.Controllers

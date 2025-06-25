@@ -1,5 +1,6 @@
 ﻿using _8bitstore_be.DTO.Product;
 using _8bitstore_be.Interfaces;
+using _8bitstore_be.Interfaces.Services;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Protocols.OpenIdConnect;
@@ -25,24 +26,13 @@ namespace _8bitstore_be.Controllers
                 return BadRequest("Request is empty");
             }
 
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(ModelState);
-            }
-
             var products = await _productService.GetProductsAsync(request);
-
             return Ok(products);          
         }
 
         [HttpGet("get-product")]
         public async Task<IActionResult> GetProduct([FromQuery] ProductRequest request)
         {
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(ModelState);
-            }
-
             if (request.ProductId == null)
             {
                 return BadRequest("Product Id is missing.");
@@ -59,14 +49,9 @@ namespace _8bitstore_be.Controllers
             }
         }
 
-        [HttpPost("add-product")]
+        [HttpPost]
         public async Task<IActionResult> AddProduct([FromBody] ProductDto product)
         {
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(ModelState);
-            }
-
             try
             {
                 await _productService.AddProductAsync(product);

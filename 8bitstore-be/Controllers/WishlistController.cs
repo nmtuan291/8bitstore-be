@@ -1,5 +1,6 @@
 ﻿using System.Security.Claims;
 using _8bitstore_be.Interfaces;
+using _8bitstore_be.Interfaces.Services;
 using _8bitstore_be.Services;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -17,7 +18,7 @@ namespace _8bitstore_be.Controllers
             _wishlistService = wishlistService;
         }
 
-        [HttpGet("get-wishlist")]
+        [HttpGet]
         public async Task<IActionResult> GetWishlist()
         {
             var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value ?? null;
@@ -38,7 +39,7 @@ namespace _8bitstore_be.Controllers
             }
         }
 
-        [HttpPost("add-item")]
+        [HttpPost("add")]
         public async Task<IActionResult> AddItem([FromBody] string productId)
         {
             if (!ModelState.IsValid)
@@ -63,7 +64,7 @@ namespace _8bitstore_be.Controllers
             }
         }
 
-        [HttpDelete("remove-item")]
+        [HttpDelete("delete")]
         public async Task<IActionResult> RemoveItem([FromQuery] string productId)
         {
             if (!ModelState.IsValid)

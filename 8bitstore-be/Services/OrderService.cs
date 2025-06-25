@@ -1,20 +1,22 @@
-﻿using _8bitstore_be.Data;
-using _8bitstore_be.DTO.Order;
-using _8bitstore_be.Interfaces;
+﻿using _8bitstore_be.DTO.Order;
+using _8bitstore_be.Interfaces.Services;
+using _8bitstore_be.Interfaces.Repositories;
 using _8bitstore_be.Models;
-using Microsoft.EntityFrameworkCore;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace _8bitstore_be.Services
 {
-    public class OrderService: IOrderService
+    public class OrderService : IOrderService
     {
-        private readonly _8bitstoreContext _context;
+        private readonly IOrderRepository _orderRepository;
 
-        public OrderService(_8bitstoreContext context)
+        public OrderService(IOrderRepository orderRepository)
         {
-            _context = context;
+            _orderRepository = orderRepository;
         }
-
 
         public async Task CreateOrderAsync(OrderDto order, string userId)
         {
@@ -27,68 +29,48 @@ namespace _8bitstore_be.Services
                 DeliveryDate = null,
                 Status = order.Status,
                 Total = order.Total ?? 0,
-                OrderProducts = new List<OrderProduct>()
-            };
-
-            foreach (var item in order.Items)
-            {
-                OrderProduct newProduct = new()
+                OrderProducts = order.Items.Select(item => new OrderProduct
                 {
                     Id = Guid.NewGuid().ToString(),
                     ProductId = item.ProductId,
                     Quantity = item.Quantity,
                     OrderId = orderId,
                     UnitPrice = item.Price
-                };
-
-                newOrder.OrderProducts.Add(newProduct); // Add to navigation property
-                await _context.OrderItems.AddAsync(newProduct); // You can keep using OrderItems here
-            }
-
-            await _context.AddAsync(newOrder);
-            await _context.SaveChangesAsync();
+                }).ToList()
+            };
+            await _orderRepository.AddAsync(newOrder);
+            await _orderRepository.SaveChangesAsync();
         }
 
         public async Task<ICollection<OrderDto>> GetOrderAsync(string userId)
         {
-            var orders = await _context.Orders
-                .Where(x => x.UserId == userId)
-                .Include(x => x.OrderProducts)
-                    .ThenInclude(p => p.Product)
-                .Select(x => new OrderDto()
+            var orders = await _orderRepository.GetOrdersByUserIdAsync(userId);
+            return orders.Select(x => new OrderDto
+            {
+                Items = x.OrderProducts.Select(p => new OrderItemDto
                 {
-                    Items = x.OrderProducts
-                        .Select(p => new OrderItemDto
-                        {
-                            ProductId = p.ProductId,
-                            Quantity = p.Quantity,
-                            ProductName = p.Product.ProductName,
-                            Price = p.UnitPrice,
-                            ImgUrl = p.Product.ImgUrl
-                        })
-                        .ToList(),
-                    Total = x.Total,
-                    Status = x.Status,
-                    OrderDate = x.OrderDate,
-                    DeliveryDate = x.DeliveryDate,
-                    OrderId = x.Id,
-                })
-                .OrderBy(x => x.OrderDate)
-                .ToListAsync();
-
-            return orders;
+                    ProductId = p.ProductId,
+                    Quantity = p.Quantity,
+                    ProductName = p.Product?.ProductName,
+                    Price = p.UnitPrice,
+                    ImgUrl = p.Product?.ImgUrl
+                }).ToList(),
+                Total = x.Total,
+                Status = x.Status,
+                OrderDate = x.OrderDate,
+                DeliveryDate = x.DeliveryDate,
+                OrderId = x.Id,
+            }).OrderBy(x => x.OrderDate).ToList();
         }
 
         public async Task ChangeOrderStatusAsync(OrderDto request)
         {
-            var order = await _context.Orders
-                .Where(o => o.Id == request.OrderId)
-                .FirstOrDefaultAsync();
-
+            var orders = await _orderRepository.FindAsync(o => o.Id == request.OrderId);
+            var order = orders.FirstOrDefault();
             if (order != null && order.Status != request.Status)
             {
                 order.Status = request.Status;
-                await _context.SaveChangesAsync();
+                await _orderRepository.SaveChangesAsync();
             }
         }
     }

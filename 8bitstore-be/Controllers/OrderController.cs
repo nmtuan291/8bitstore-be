@@ -2,6 +2,7 @@
 using _8bitstore_be.DTO;
 using _8bitstore_be.DTO.Order;
 using _8bitstore_be.Interfaces;
+using _8bitstore_be.Interfaces.Services;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -18,7 +19,7 @@ namespace _8bitstore_be.Controllers
             _orderService = orderService;
         }
 
-        [HttpPost("create-order")]
+        [HttpPost("add")]
         public async Task<IActionResult> CreateOrder([FromBody] OrderDto order)
         {
             var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value ?? null;
@@ -27,11 +28,6 @@ namespace _8bitstore_be.Controllers
             {
                 return BadRequest("User does not exists");
             } 
-
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(ModelState);
-            }
 
             try
             {
@@ -44,7 +40,7 @@ namespace _8bitstore_be.Controllers
             }
         }
 
-        [HttpGet("get-orders")]
+        [HttpGet]
         public async Task<IActionResult> GetOrders()
         {
             var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value ?? null;

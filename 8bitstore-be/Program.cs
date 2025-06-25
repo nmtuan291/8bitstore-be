@@ -1,7 +1,8 @@
 ﻿using Npgsql.EntityFrameworkCore.PostgreSQL;
 using _8bitstore_be.Data;
 using Microsoft.EntityFrameworkCore;
-using _8bitstore_be.Interfaces;
+using _8bitstore_be.Interfaces.Services;
+using _8bitstore_be.Interfaces.Repositories;
 using _8bitstore_be.Services;
 using _8bitstore_be.Models;
 using Microsoft.AspNetCore.Identity;
@@ -36,11 +37,6 @@ builder.Services.AddCors(options =>
     });
 });
 
-// Neo4j
-var neo4jConfig = builder.Configuration.GetSection("Neo4j");
-var driver = GraphDatabase.Driver(neo4jConfig["uri"], AuthTokens.Basic(neo4jConfig["user"], neo4jConfig["password"]));
-
-
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
@@ -56,11 +52,20 @@ builder.Services.Configure<IdentityOptions>(options =>
     options.User.RequireUniqueEmail = true;
 });
 
-builder.Services.AddSingleton<IDriver>(driver);
 builder.Services.AddSingleton<IConfiguration>(builder.Configuration);
+
+// Register repositories
+builder.Services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
+builder.Services.AddScoped<IProductRepository, ProductRepository>();
+builder.Services.AddScoped<IOrderRepository, OrderRepository>();
+builder.Services.AddScoped<IWishlistRepository, WishlistRepository>();
+builder.Services.AddScoped<IReviewRepository, ReviewRepository>();
+builder.Services.AddScoped<ICartRepository, CartRepository>();
+builder.Services.AddScoped<IPaymentVnPayRepository, PaymentVnPayRepository>();
+
+// Register services
 builder.Services.AddScoped<IRegistrationService, RegistrationService>();
 builder.Services.AddScoped<ILoginService, LoginService>();
-builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<IProductService, ProductService>();
 builder.Services.AddScoped<ICartService, CartService>();
 builder.Services.AddScoped<IVnPayService, VnPayService>();

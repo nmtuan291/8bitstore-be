@@ -1,21 +1,26 @@
 ﻿using _8bitstore_be.Libraries;
 using _8bitstore_be.DTO;
-using _8bitstore_be.Interfaces;
+using _8bitstore_be.Interfaces.Services;
+using _8bitstore_be.Interfaces.Repositories;
 using _8bitstore_be.DTO.Payment;
-using _8bitstore_be.Data;
 using _8bitstore_be.Models;
+using Microsoft.Extensions.Configuration;
+using System;
+using System.Globalization;
+using System.Threading.Tasks;
+using Microsoft.AspNetCore.Http;
 
 namespace _8bitstore_be.Services
 {
-    public class VnPayService: IVnPayService
+    public class VnPayService : IVnPayService
     {
         private readonly IConfiguration _configuration;
-        private readonly _8bitstoreContext _context;
+        private readonly IPaymentVnPayRepository _paymentVnPayRepository;
 
-        public VnPayService(IConfiguration configuration, _8bitstoreContext context)
+        public VnPayService(IConfiguration configuration, IPaymentVnPayRepository paymentVnPayRepository)
         {
             _configuration = configuration;
-            _context = context;
+            _paymentVnPayRepository = paymentVnPayRepository;
         }
 
         public string CreatePaymentUrl(HttpContext context, string amount)
@@ -33,7 +38,6 @@ namespace _8bitstore_be.Services
             vnpay.AddRequestData("vnp_ReturnUrl", _configuration["Vnpay:PaymentBackReturnUrl"]);
             vnpay.AddRequestData("vnp_TxnRef", Guid.NewGuid().ToString());
             vnpay.AddRequestData("vnp_Version", VnPay.VERSION);
-
             return vnpay.CreateRequestUrl(_configuration["Vnpay:BaseUrl"], _configuration["Vnpay:HashSecret"]);
         }
 
@@ -52,10 +56,8 @@ namespace _8bitstore_be.Services
             vnPay.AddResponseData("vnp_TransactionStatus", result.TransactionStatus);
             vnPay.AddResponseData("vnp_TxnRef", result.TxnRef);
             vnPay.AddResponseData("vnp_SecureHashType", "SHA512");
-
             bool validateResult = vnPay.ValidateSignature(result.SecureHash, _configuration["Vnpay:HashSecret"]);
-
-            if (!validateResult) 
+            if (!validateResult)
             {
                 return new StatusResponse<string>
                 {
@@ -63,10 +65,7 @@ namespace _8bitstore_be.Services
                     Message = "Invalid secure hash"
                 };
             }
-
-            if (!DateTime.TryParseExact(result.PayDate, "yyyyMMddHHmmss",
-            System.Globalization.CultureInfo.InvariantCulture,
-            System.Globalization.DateTimeStyles.None, out DateTime payDate))
+            if (!DateTime.TryParseExact(result.PayDate, "yyyyMMddHHmmss", CultureInfo.InvariantCulture, DateTimeStyles.None, out DateTime payDate))
             {
                 throw new ArgumentException("Invalid PayDate format. Expected yyyyMMddHHmmss.");
             }
@@ -85,10 +84,8 @@ namespace _8bitstore_be.Services
                 OrderId = result.OrderId,
                 Id = Guid.NewGuid().ToString(),
             };
-
-            await _context.PaymentVnPays.AddAsync(payment);
-            await _context.SaveChangesAsync();
-
+            await _paymentVnPayRepository.AddAsync(payment);
+            await _paymentVnPayRepository.SaveChangesAsync();
             return new StatusResponse<string>
             {
                 Status = "SUCCESS",

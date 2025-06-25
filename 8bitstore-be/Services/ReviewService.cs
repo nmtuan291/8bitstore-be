@@ -1,48 +1,43 @@
-﻿using _8bitstore_be.Data;
-using _8bitstore_be.DTO.Review;
-using _8bitstore_be.Interfaces;
+﻿using _8bitstore_be.DTO.Review;
+using _8bitstore_be.Interfaces.Services;
+using _8bitstore_be.Interfaces.Repositories;
 using _8bitstore_be.Models;
-using Microsoft.EntityFrameworkCore;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace _8bitstore_be.Services
 {
     public class ReviewService : IReviewService
     {
-        private readonly _8bitstoreContext _context;
+        private readonly IReviewRepository _reviewRepository;
+        private readonly IRepository<User> _userRepository;
 
-        public ReviewService(_8bitstoreContext context)
+        public ReviewService(IReviewRepository reviewRepository, IRepository<User> userRepository)
         {
-            _context = context;
+            _reviewRepository = reviewRepository;
+            _userRepository = userRepository;
         }
 
         public async Task<ICollection<ReviewDto>> GetReviewAsync(string productId)
         {
-            var reviews = await _context.Reviews
-                   .Where(review => review.ProductId == productId)
-                   .Include(review => review.User)
-                   .ToListAsync();
-
-            ICollection<ReviewDto> reviewDto = reviews.Select(review => new ReviewDto
+            var reviews = await _reviewRepository.GetReviewsByProductIdAsync(productId);
+            return reviews.Select(review => new ReviewDto
             {
                 ProductId = productId,
-                UserName = review.User.UserName,
+                UserName = review.User?.UserName,
                 Comment = review.Comment,
                 ReviewDate = review.ReviewDate,
                 Score = review.Score
             }).ToList();
-
-            return reviewDto;
         }
 
         public async Task AddReviewAsync(string userId, ReviewDto review)
         {
-            var user = await _context.Users.FindAsync(userId);
-
+            var user = await _userRepository.GetByIdAsync(userId);
             if (user == null)
-            {
                 throw new KeyNotFoundException("User does not exists");
-            }
-
             try
             {
                 Review newReview = new Review
@@ -54,11 +49,10 @@ namespace _8bitstore_be.Services
                     ProductId = review.ProductId,
                     ReviewDate = DateTime.UtcNow,
                 };
-
-                await _context.Reviews.AddAsync(newReview);
-                await _context.SaveChangesAsync();
+                await _reviewRepository.AddAsync(newReview);
+                await _reviewRepository.SaveChangesAsync();
             }
-            catch (DbUpdateException ex)
+            catch (Exception ex)
             {
                 throw new Exception("Failed to save review", ex);
             }

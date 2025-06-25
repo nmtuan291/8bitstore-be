@@ -1,6 +1,7 @@
 ﻿using System.Net;
 using System.Net.Mail;
 using _8bitstore_be.Interfaces;
+using _8bitstore_be.Interfaces.Services;
 
 namespace _8bitstore_be.Services
 {

@@ -1,26 +1,28 @@
-﻿using _8bitstore_be.Data;
-using _8bitstore_be.DTO.Cart;
-using _8bitstore_be.Interfaces;
+﻿using _8bitstore_be.DTO.Cart;
+using _8bitstore_be.Interfaces.Services;
+using _8bitstore_be.Interfaces.Repositories;
 using _8bitstore_be.Models;
-using Microsoft.EntityFrameworkCore;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace _8bitstore_be.Services
 {
-    public class CartService: ICartService
+    public class CartService : ICartService
     {
-        private readonly _8bitstoreContext _context;
+        private readonly ICartRepository _cartRepository;
+        private readonly IProductRepository _productRepository;
 
-        public CartService(_8bitstoreContext context)
+        public CartService(ICartRepository cartRepository, IProductRepository productRepository)
         {
-            _context = context;
+            _cartRepository = cartRepository;
+            _productRepository = productRepository;
         }
 
         public async Task AddItemAsync(string userId, string productId, int quantity)
         {
-            var cart = await _context.Carts
-                .Include(c => c.CartItems)
-                .SingleOrDefaultAsync(c => c.UserId == userId);
-
+            var cart = await _cartRepository.GetCartByUserIdAsync(userId);
             if (cart == null)
             {
                 cart = new Cart
@@ -29,12 +31,9 @@ namespace _8bitstore_be.Services
                     Id = Guid.NewGuid().ToString(),
                     CartItems = new List<CartItem>()
                 };
-
-                await _context.Carts.AddAsync(cart);
+                await _cartRepository.AddAsync(cart);
             }
-
             var cartItem = cart.CartItems.FirstOrDefault(item => item.ProductId == productId);
-
             if (cartItem == null)
             {
                 cart.CartItems.Add(new CartItem
@@ -49,47 +48,26 @@ namespace _8bitstore_be.Services
             {
                 cartItem.Quantity = quantity;
             }
-
-            await _context.SaveChangesAsync();
+            await _cartRepository.SaveChangesAsync();
         }
-        
+
         public async Task DeleteItemAsync(string userId, string productId)
         {
-            var cart = await _context.Carts
-                .Where(c => c.UserId == userId)
-                .Include(c => c.CartItems)
-                .SingleOrDefaultAsync();
-
+            var cart = await _cartRepository.GetCartByUserIdAsync(userId);
             if (cart == null)
-            {
                 throw new KeyNotFoundException($"Cart was not found");
-            }
-
-            var itemToRemove = cart.CartItems
-                .Where(ci => ci.ProductId == productId)
-                .SingleOrDefault();
-
+            var itemToRemove = cart.CartItems.FirstOrDefault(ci => ci.ProductId == productId);
             if (itemToRemove == null)
-            {
-                throw new KeyNotFoundException("Item not found in ther cart");
-            }
+                throw new KeyNotFoundException("Item not found in the cart");
             cart.CartItems.Remove(itemToRemove);
-
-            await _context.SaveChangesAsync();
+            await _cartRepository.SaveChangesAsync();
         }
 
         public async Task<CartDto> GetCartAsync(string userId)
         {
-            var cart = await _context.Carts
-                .Include(c => c.CartItems)
-                    .ThenInclude(ci => ci.Product)
-                .SingleOrDefaultAsync(c => c.UserId == userId);
-
+            var cart = await _cartRepository.GetCartByUserIdAsync(userId);
             if (cart == null)
-            {
                 throw new KeyNotFoundException("Cart with the user ID cannot be found");
-            }
-
             return new CartDto
             {
                 Id = cart.Id,
@@ -98,9 +76,9 @@ namespace _8bitstore_be.Services
                 {
                     ProductId = item.ProductId,
                     Quantity = item.Quantity,
-                    ProductName = item.Product.ProductName,
-                    Price = item.Product.Price,
-                    ImgUrl = item.Product.ImgUrl
+                    ProductName = item.Product?.ProductName,
+                    Price = item.Product?.Price ?? 0,
+                    ImgUrl = item.Product?.ImgUrl
                 }).ToList(),
             };
         }

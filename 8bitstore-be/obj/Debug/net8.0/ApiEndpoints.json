@@ -1,8 +1,18 @@
 [
   {
     "ContainingType": "_8bitstore_be.Controllers.CartController",
+    "Method": "GetCart",
+    "RelativePath": "api/Cart",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "_8bitstore_be.Controllers.CartController",
     "Method": "AddItem",
-    "RelativePath": "api/Cart/add-item",
+    "RelativePath": "api/Cart/add",
     "HttpMethod": "POST",
     "IsController": true,
     "Order": 0,
@@ -18,7 +28,7 @@
   {
     "ContainingType": "_8bitstore_be.Controllers.CartController",
     "Method": "DeleteItem",
-    "RelativePath": "api/Cart/delete-item",
+    "RelativePath": "api/Cart/delete",
     "HttpMethod": "DELETE",
     "IsController": true,
     "Order": 0,
@@ -32,19 +42,9 @@
     "ReturnTypes": []
   },
   {
-    "ContainingType": "_8bitstore_be.Controllers.CartController",
-    "Method": "GetCart",
-    "RelativePath": "api/Cart/get-cart",
-    "HttpMethod": "GET",
-    "IsController": true,
-    "Order": 0,
-    "Parameters": [],
-    "ReturnTypes": []
-  },
-  {
     "ContainingType": "_8bitstore_be.Controllers.EmailController",
     "Method": "SendEmail",
-    "RelativePath": "api/Email/send",
+    "RelativePath": "api/Email",
     "HttpMethod": "GET",
     "IsController": true,
     "Order": 0,
@@ -69,6 +69,32 @@
   },
   {
     "ContainingType": "_8bitstore_be.Controllers.OrderController",
+    "Method": "GetOrders",
+    "RelativePath": "api/Order",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "_8bitstore_be.Controllers.OrderController",
+    "Method": "CreateOrder",
+    "RelativePath": "api/Order/add",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "order",
+        "Type": "_8bitstore_be.DTO.Order.OrderDto",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "_8bitstore_be.Controllers.OrderController",
     "Method": "ChangeStatus",
     "RelativePath": "api/Order/change-status/{orderId}",
     "HttpMethod": "PATCH",
@@ -86,32 +112,6 @@
         "IsRequired": true
       }
     ],
-    "ReturnTypes": []
-  },
-  {
-    "ContainingType": "_8bitstore_be.Controllers.OrderController",
-    "Method": "CreateOrder",
-    "RelativePath": "api/Order/create-order",
-    "HttpMethod": "POST",
-    "IsController": true,
-    "Order": 0,
-    "Parameters": [
-      {
-        "Name": "order",
-        "Type": "_8bitstore_be.DTO.Order.OrderDto",
-        "IsRequired": true
-      }
-    ],
-    "ReturnTypes": []
-  },
-  {
-    "ContainingType": "_8bitstore_be.Controllers.OrderController",
-    "Method": "GetOrders",
-    "RelativePath": "api/Order/get-orders",
-    "HttpMethod": "GET",
-    "IsController": true,
-    "Order": 0,
-    "Parameters": [],
     "ReturnTypes": []
   },
   {
@@ -149,7 +149,7 @@
   {
     "ContainingType": "_8bitstore_be.Controllers.ProductController",
     "Method": "AddProduct",
-    "RelativePath": "api/Product/add-product",
+    "RelativePath": "api/Product",
     "HttpMethod": "POST",
     "IsController": true,
     "Order": 0,
@@ -312,24 +312,8 @@
   },
   {
     "ContainingType": "_8bitstore_be.Controllers.ReviewController",
-    "Method": "AddReview",
-    "RelativePath": "api/Review/add-review",
-    "HttpMethod": "POST",
-    "IsController": true,
-    "Order": 0,
-    "Parameters": [
-      {
-        "Name": "request",
-        "Type": "_8bitstore_be.DTO.Review.ReviewDto",
-        "IsRequired": true
-      }
-    ],
-    "ReturnTypes": []
-  },
-  {
-    "ContainingType": "_8bitstore_be.Controllers.ReviewController",
     "Method": "GetReviews",
-    "RelativePath": "api/Review/get-reviews",
+    "RelativePath": "api/Review",
     "HttpMethod": "GET",
     "IsController": true,
     "Order": 0,
@@ -338,6 +322,22 @@
         "Name": "productId",
         "Type": "System.String",
         "IsRequired": false
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "_8bitstore_be.Controllers.ReviewController",
+    "Method": "AddReview",
+    "RelativePath": "api/Review/add",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "request",
+        "Type": "_8bitstore_be.DTO.Review.ReviewDto",
+        "IsRequired": true
       }
     ],
     "ReturnTypes": []
@@ -412,8 +412,18 @@
   },
   {
     "ContainingType": "_8bitstore_be.Controllers.WishlistController",
+    "Method": "GetWishlist",
+    "RelativePath": "api/Wishlist",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "_8bitstore_be.Controllers.WishlistController",
     "Method": "AddItem",
-    "RelativePath": "api/Wishlist/add-item",
+    "RelativePath": "api/Wishlist/add",
     "HttpMethod": "POST",
     "IsController": true,
     "Order": 0,
@@ -428,18 +438,8 @@
   },
   {
     "ContainingType": "_8bitstore_be.Controllers.WishlistController",
-    "Method": "GetWishlist",
-    "RelativePath": "api/Wishlist/get-wishlist",
-    "HttpMethod": "GET",
-    "IsController": true,
-    "Order": 0,
-    "Parameters": [],
-    "ReturnTypes": []
-  },
-  {
-    "ContainingType": "_8bitstore_be.Controllers.WishlistController",
     "Method": "RemoveItem",
-    "RelativePath": "api/Wishlist/remove-item",
+    "RelativePath": "api/Wishlist/delete",
     "HttpMethod": "DELETE",
     "IsController": true,
     "Order": 0,
@@ -451,26 +451,5 @@
       }
     ],
     "ReturnTypes": []
-  },
-  {
-    "ContainingType": "_8bitstore_be.Controllers.WeatherForecastController",
-    "Method": "Get",
-    "RelativePath": "WeatherForecast",
-    "HttpMethod": "GET",
-    "IsController": true,
-    "Order": 0,
-    "Parameters": [],
-    "ReturnTypes": [
-      {
-        "Type": "System.Collections.Generic.IEnumerable\u00601[[_8bitstore_be.WeatherForecast, 8bitstore-be, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]",
-        "MediaTypes": [
-          "text/plain",
-          "application/json",
-          "text/json"
-        ],
-        "StatusCode": 200
-      }
-    ],
-    "EndpointName": "GetWeatherForecast"
   }
 ]

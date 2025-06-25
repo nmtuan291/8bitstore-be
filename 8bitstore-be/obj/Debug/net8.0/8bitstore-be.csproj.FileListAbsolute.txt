@@ -7,7 +7,6 @@ C:\Users\Admin\source\repos\8bitstore-be\8bitstore-be\obj\Debug\net8.0\8bitstore
 C:\Users\Admin\source\repos\8bitstore-be\8bitstore-be\obj\Debug\net8.0\8bitstore-be.MvcApplicationPartsAssemblyInfo.cache
 C:\Users\Admin\source\repos\8bitstore-be\8bitstore-be\bin\Debug\net8.0\appsettings.Development.json
 C:\Users\Admin\source\repos\8bitstore-be\8bitstore-be\bin\Debug\net8.0\appsettings.json
-C:\Users\Admin\source\repos\8bitstore-be\8bitstore-be\bin\Debug\net8.0\8bitstore-be.staticwebassets.endpoints.json
 C:\Users\Admin\source\repos\8bitstore-be\8bitstore-be\bin\Debug\net8.0\8bitstore-be.exe
 C:\Users\Admin\source\repos\8bitstore-be\8bitstore-be\bin\Debug\net8.0\8bitstore-be.deps.json
 C:\Users\Admin\source\repos\8bitstore-be\8bitstore-be\bin\Debug\net8.0\8bitstore-be.runtimeconfig.json
@@ -47,9 +46,7 @@ C:\Users\Admin\source\repos\8bitstore-be\8bitstore-be\bin\Debug\net8.0\runtimes\
 C:\Users\Admin\source\repos\8bitstore-be\8bitstore-be\obj\Debug\net8.0\scopedcss\bundle\8bitstore-be.styles.css
 C:\Users\Admin\source\repos\8bitstore-be\8bitstore-be\obj\Debug\net8.0\staticwebassets.build.json
 C:\Users\Admin\source\repos\8bitstore-be\8bitstore-be\obj\Debug\net8.0\staticwebassets.development.json
-C:\Users\Admin\source\repos\8bitstore-be\8bitstore-be\obj\Debug\net8.0\staticwebassets.build.endpoints.json
 C:\Users\Admin\source\repos\8bitstore-be\8bitstore-be\obj\Debug\net8.0\staticwebassets\msbuild.8bitstore-be.Microsoft.AspNetCore.StaticWebAssets.props
-C:\Users\Admin\source\repos\8bitstore-be\8bitstore-be\obj\Debug\net8.0\staticwebassets\msbuild.8bitstore-be.Microsoft.AspNetCore.StaticWebAssetEndpoints.props
 C:\Users\Admin\source\repos\8bitstore-be\8bitstore-be\obj\Debug\net8.0\staticwebassets\msbuild.build.8bitstore-be.props
 C:\Users\Admin\source\repos\8bitstore-be\8bitstore-be\obj\Debug\net8.0\staticwebassets\msbuild.buildMultiTargeting.8bitstore-be.props
 C:\Users\Admin\source\repos\8bitstore-be\8bitstore-be\obj\Debug\net8.0\staticwebassets\msbuild.buildTransitive.8bitstore-be.props
@@ -163,4 +160,3 @@ C:\Users\Admin\source\repos\8bitstore-be\8bitstore-be\bin\Debug\net8.0\Nest.dll
 C:\Users\Admin\source\repos\8bitstore-be\8bitstore-be\bin\Debug\net8.0\BouncyCastle.Cryptography.dll
 C:\Users\Admin\source\repos\8bitstore-be\8bitstore-be\bin\Debug\net8.0\MailKit.dll
 C:\Users\Admin\source\repos\8bitstore-be\8bitstore-be\bin\Debug\net8.0\MimeKit.dll
-C:\Users\Admin\source\repos\8bitstore-be\8bitstore-be\obj\Debug\net8.0\staticwebassets.upToDateCheck.txt

@@ -5,7 +5,7 @@
     "version": "1.0"
   },
   "paths": {
-    "/api/Cart/add-item": {
+    "/api/Cart/add": {
       "post": {
         "tags": [
           "Cart"
@@ -36,7 +36,7 @@
         }
       }
     },
-    "/api/Cart/delete-item": {
+    "/api/Cart/delete": {
       "delete": {
         "tags": [
           "Cart"
@@ -57,7 +57,7 @@
         }
       }
     },
-    "/api/Cart/get-cart": {
+    "/api/Cart": {
       "get": {
         "tags": [
           "Cart"
@@ -69,7 +69,7 @@
         }
       }
     },
-    "/api/Email/send": {
+    "/api/Email": {
       "get": {
         "tags": [
           "Email"
@@ -104,7 +104,7 @@
         }
       }
     },
-    "/api/Order/create-order": {
+    "/api/Order/add": {
       "post": {
         "tags": [
           "Order"
@@ -135,7 +135,7 @@
         }
       }
     },
-    "/api/Order/get-orders": {
+    "/api/Order": {
       "get": {
         "tags": [
           "Order"
@@ -466,7 +466,7 @@
         }
       }
     },
-    "/api/Product/add-product": {
+    "/api/Product": {
       "post": {
         "tags": [
           "Product"
@@ -518,7 +518,7 @@
         }
       }
     },
-    "/api/Review/get-reviews": {
+    "/api/Review": {
       "get": {
         "tags": [
           "Review"
@@ -539,7 +539,7 @@
         }
       }
     },
-    "/api/Review/add-review": {
+    "/api/Review/add": {
       "post": {
         "tags": [
           "Review"
@@ -687,46 +687,7 @@
         }
       }
     },
-    "/WeatherForecast": {
-      "get": {
-        "tags": [
-          "WeatherForecast"
-        ],
-        "operationId": "GetWeatherForecast",
-        "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "text/plain": {
-                "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/WeatherForecast"
-                  }
-                }
-              },
-              "application/json": {
-                "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/WeatherForecast"
-                  }
-                }
-              },
-              "text/json": {
-                "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/WeatherForecast"
-                  }
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/api/Wishlist/get-wishlist": {
+    "/api/Wishlist": {
       "get": {
         "tags": [
           "Wishlist"
@@ -738,7 +699,7 @@
         }
       }
     },
-    "/api/Wishlist/add-item": {
+    "/api/Wishlist/add": {
       "post": {
         "tags": [
           "Wishlist"
@@ -769,7 +730,7 @@
         }
       }
     },
-    "/api/Wishlist/remove-item": {
+    "/api/Wishlist/delete": {
       "delete": {
         "tags": [
           "Wishlist"
@@ -1167,29 +1128,6 @@
           "orderId": {
             "minLength": 1,
             "type": "string"
-          }
-        },
-        "additionalProperties": false
-      },
-      "WeatherForecast": {
-        "type": "object",
-        "properties": {
-          "date": {
-            "type": "string",
-            "format": "date"
-          },
-          "temperatureC": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "temperatureF": {
-            "type": "integer",
-            "format": "int32",
-            "readOnly": true
-          },
-          "summary": {
-            "type": "string",
-            "nullable": true
           }
         },
         "additionalProperties": false

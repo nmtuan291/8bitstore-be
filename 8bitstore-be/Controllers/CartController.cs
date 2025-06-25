@@ -2,6 +2,7 @@
 using System.Security.Claims;
 using _8bitstore_be.DTO.Cart;
 using _8bitstore_be.Interfaces;
+using _8bitstore_be.Interfaces.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -19,15 +20,10 @@ namespace _8bitstore_be.Controllers
             _cartService = cartService;
         }
 
-        [HttpPost("add-item")]
+        [HttpPost("add")]
         public async Task<IActionResult> AddItem([FromBody] AddItemRequestDto request)  
         {
             var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value ?? null;
-
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(ModelState);
-            }
 
             if (userId == null || request.ProductId == null)
             {
@@ -46,16 +42,10 @@ namespace _8bitstore_be.Controllers
            
         }
 
-        [HttpDelete("delete-item")]
+        [HttpDelete("delete")]
         public async Task<IActionResult> DeleteItem([FromQuery] string productId)
         {
             var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value ?? null;
-
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(ModelState);
-            }
-
             try
             {
                 await _cartService.DeleteItemAsync(userId, productId);
@@ -68,7 +58,7 @@ namespace _8bitstore_be.Controllers
         }
 
         [Authorize]
-        [HttpGet("get-cart")]
+        [HttpGet]
         public async Task<IActionResult> GetCart()
         {
 

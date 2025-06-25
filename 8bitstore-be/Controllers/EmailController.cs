@@ -1,4 +1,5 @@
 ﻿using _8bitstore_be.Interfaces;
+using _8bitstore_be.Interfaces.Services;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -15,7 +16,7 @@ namespace _8bitstore_be.Controllers
             _emailService = emailService;
         }
 
-        [HttpGet("send")]
+        [HttpGet]
         public async Task<IActionResult> SendEmail(string toEmail,  string subject, string body)
         {
             await _emailService.SendEmailAsync(toEmail, body, subject);

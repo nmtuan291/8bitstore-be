@@ -1,6 +1,7 @@
 ﻿using System.Security.Claims;
 using _8bitstore_be.DTO.Review;
 using _8bitstore_be.Interfaces;
+using _8bitstore_be.Interfaces.Services;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -17,7 +18,7 @@ namespace _8bitstore_be.Controllers
             _reviewService = reviewService;
         }
 
-        [HttpGet("get-reviews")]
+        [HttpGet]
         public async Task<IActionResult> GetReviews([FromQuery] string productId)
         {
             if (!ModelState.IsValid)
@@ -36,7 +37,7 @@ namespace _8bitstore_be.Controllers
             }
         }
 
-        [HttpPost("add-review")]
+        [HttpPost("add")]
         public async Task<IActionResult> AddReview([FromBody] ReviewDto request)
         {
             if (!ModelState.IsValid)
