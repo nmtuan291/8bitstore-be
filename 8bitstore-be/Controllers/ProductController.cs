@@ -1,6 +1,7 @@
 ﻿using _8bitstore_be.DTO.Product;
 using _8bitstore_be.Interfaces;
 using _8bitstore_be.Interfaces.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Protocols.OpenIdConnect;
@@ -48,7 +49,8 @@ namespace _8bitstore_be.Controllers
                 return BadRequest(ex.Message);
             }
         }
-
+        
+        [Authorize(Roles = "Admin")]
         [HttpPost]
         public async Task<IActionResult> AddProduct([FromBody] ProductDto product)
         {

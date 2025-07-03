@@ -19,7 +19,8 @@ namespace _8bitstore_be.Controllers
         {
             _cartService = cartService;
         }
-
+        
+        [Authorize]
         [HttpPost("add")]
         public async Task<IActionResult> AddItem([FromBody] AddItemRequestDto request)  
         {
@@ -41,7 +42,8 @@ namespace _8bitstore_be.Controllers
             }
            
         }
-
+        
+        [Authorize]
         [HttpDelete("delete")]
         public async Task<IActionResult> DeleteItem([FromQuery] string productId)
         {

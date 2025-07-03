@@ -2,6 +2,7 @@
 using _8bitstore_be.Interfaces;
 using _8bitstore_be.Interfaces.Services;
 using _8bitstore_be.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -17,7 +18,8 @@ namespace _8bitstore_be.Controllers
         {
             _wishlistService = wishlistService;
         }
-
+        
+        [Authorize]
         [HttpGet]
         public async Task<IActionResult> GetWishlist()
         {
@@ -38,7 +40,8 @@ namespace _8bitstore_be.Controllers
                 return StatusCode(500, "Internal Server Error");
             }
         }
-
+        
+        [Authorize]
         [HttpPost("add")]
         public async Task<IActionResult> AddItem([FromBody] string productId)
         {
@@ -63,7 +66,8 @@ namespace _8bitstore_be.Controllers
                 return StatusCode(500, ex.Message);
             }
         }
-
+        
+        [Authorize]
         [HttpDelete("delete")]
         public async Task<IActionResult> RemoveItem([FromQuery] string productId)
         {

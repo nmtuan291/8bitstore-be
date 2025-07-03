@@ -107,7 +107,8 @@ namespace _8bitstore_be.Controllers
 
             return Ok(user);
         }
-
+        
+        [Authorize]
         [HttpPatch("update-address")]
         public async Task<IActionResult> UpdateAddress([FromBody] UserDto request)
         {
@@ -133,7 +134,8 @@ namespace _8bitstore_be.Controllers
                 return StatusCode(500, ex.Message);
             }
         }
-
+        
+        [Authorize]
         [HttpPost("logout")]
         public async Task<IActionResult> Logout()
         {

@@ -3,6 +3,7 @@ using _8bitstore_be.DTO;
 using _8bitstore_be.DTO.Order;
 using _8bitstore_be.Interfaces;
 using _8bitstore_be.Interfaces.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -18,7 +19,8 @@ namespace _8bitstore_be.Controllers
         {
             _orderService = orderService;
         }
-
+        
+        [Authorize]
         [HttpPost("add")]
         public async Task<IActionResult> CreateOrder([FromBody] OrderDto order)
         {
@@ -40,6 +42,7 @@ namespace _8bitstore_be.Controllers
             }
         }
 
+        [Authorize]
         [HttpGet]
         public async Task<IActionResult> GetOrders()
         {
@@ -64,7 +67,8 @@ namespace _8bitstore_be.Controllers
                 return StatusCode(500, ex.Message);
             }
          }
-
+        
+        [Authorize(Roles = "Admin")]   
         [HttpPatch("change-status/{orderId}")]
         public async Task<IActionResult> ChangeStatus(string orderId, [FromBody] string status)
         {

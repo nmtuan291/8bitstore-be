@@ -2,6 +2,7 @@
 using _8bitstore_be.DTO.Review;
 using _8bitstore_be.Interfaces;
 using _8bitstore_be.Interfaces.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -36,7 +37,8 @@ namespace _8bitstore_be.Controllers
                 return StatusCode(500, ex.Message);
             }
         }
-
+        
+        [Authorize]
         [HttpPost("add")]
         public async Task<IActionResult> AddReview([FromBody] ReviewDto request)
         {
