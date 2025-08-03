@@ -18,5 +18,6 @@ namespace _8bitstore_be.Data
         public DbSet<PaymentVnPay> PaymentVnPays { get; set; }
         public DbSet<WishlistItem> WishlistItems { get; set; }
         public DbSet<Payment> Payments { get; set; }
+        public DbSet<Address> Addresses { get; set; }
     }
 }

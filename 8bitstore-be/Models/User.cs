@@ -5,14 +5,10 @@ namespace _8bitstore_be.Models
 {
     public class User: IdentityUser
     {
+        [Required]
         public string FullName { get; set; }
-
-        public string? Address { get; set; }
-
-        public string? City { get; set; }
-
-        public string? District { get; set; }
-
-        public string? SubDistrict { get; set; }
+        
+        [Required]
+        public ICollection<Address> Addresses { get; set; }
     }
 }

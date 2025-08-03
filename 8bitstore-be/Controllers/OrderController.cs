@@ -67,6 +67,17 @@ namespace _8bitstore_be.Controllers
                 return StatusCode(500, ex.Message);
             }
          }
+
+        [HttpGet("get-all")]
+        public async Task<IActionResult> GetAllOrders()
+        {
+            ICollection<OrderDto> orders = await _orderService.GetOrdersAsync();
+            return Ok(new StatusResponse<ICollection<OrderDto>>
+            {
+                Status = "SUCCESS",
+                Message = orders
+            });
+        }
         
         [Authorize(Roles = "Admin")]   
         [HttpPatch("change-status/{orderId}")]

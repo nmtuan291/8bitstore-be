@@ -31,6 +31,13 @@ namespace _8bitstore_be.Controllers
             return Ok(products);          
         }
 
+        [HttpGet("get-all")]
+        public async Task<IActionResult> GetAllProduct([FromQuery] ProductRequest request)
+        {
+            var products = await _productService.GetAllProductAsync();
+            return Ok(products);
+        }
+
         [HttpGet("get-product")]
         public async Task<IActionResult> GetProduct([FromQuery] ProductRequest request)
         {
@@ -50,7 +57,6 @@ namespace _8bitstore_be.Controllers
             }
         }
         
-        [Authorize(Roles = "Admin")]
         [HttpPost]
         public async Task<IActionResult> AddProduct([FromBody] ProductDto product)
         {

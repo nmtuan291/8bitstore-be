@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.Runtime.InteropServices;
 
 namespace _8bitstore_be.DTO.Order
 {
@@ -22,5 +23,8 @@ namespace _8bitstore_be.DTO.Order
 
         [Required]
         public string Status { get; set; }
+
+        public string? user { get; set; }
+        public string? phone { get; set; }
     }
 }

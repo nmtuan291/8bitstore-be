@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Identity;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using _8bitstore_be.DTO.User;
 using _8bitstore_be.Interfaces.Repositories;
 using _8bitstore_be.Interfaces.Services;
 
@@ -11,25 +12,23 @@ namespace _8bitstore_be.Services
 {
     public class UserService : IUserService
     {
-        private readonly IRepository<User> _userRepository;
+        private readonly IUserRepository _userRepository;
         private readonly UserManager<User> _userManager;
 
-        public UserService(IRepository<User> userRepository, UserManager<User> userManager)
+        public UserService(IUserRepository userRepository, UserManager<User> userManager)
         {
             _userRepository = userRepository;
             _userManager = userManager;
         }
 
-        public async Task ChangeAddressAsync(string userId, string address, string city, string district, string subDistrict)
+        public async Task ChangeAddressAsync(AddressDto addressDto)
         {
-            var user = await _userRepository.GetByIdAsync(userId);
-            if (user == null)
-                throw new KeyNotFoundException("User does not exists");
-            user.Address = address;
-            user.City = city;
-            user.District = district;
-            user.SubDistrict = subDistrict;
-            await _userRepository.SaveChangesAsync();
+            await _userRepository.UpdateAddressAsync(addressDto);
+        }
+
+        public async Task AddAddressAsync(AddressDto addressDto, string userId)
+        {
+            await _userRepository.InsertAddressAsync(addressDto, userId);
         }
 
         public async Task ChangePasswordAsync(string userId, string newPassword, string currentPassword)
@@ -46,7 +45,30 @@ namespace _8bitstore_be.Services
             if (user == null)
                 return;
             var token = await _userManager.GeneratePasswordResetTokenAsync(user);
-            // You may want to send this token via email or other means
+            
+            // Not done
+        }
+
+        public async Task<IEnumerable<AddressDto>> GetAddressesByUserIdAsync(string userId)
+        {
+            var addresses = await _userRepository.GetAddressesByUserIdAsync(userId);
+
+            return addresses.Select(address => new AddressDto()
+            {
+                Id = address.Id,
+                AddressDetail = address.AddressDetail,
+                City = address.City,
+                District = address.District,
+                Ward = address.Ward,
+                Recipent = address.Recipent,
+                RecipentPhone = address.RecipentPhone,
+                IsDefault = address.IsDefault
+            });
+        }
+
+        public async Task DeleteAddressAsync(Guid id)
+        {
+            await _userRepository.DeleteAddressById(id);
         }
     }
 }

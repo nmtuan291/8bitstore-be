@@ -12,9 +12,9 @@ namespace _8bitstore_be.Services
     public class LoginService : ILoginService
     {
         private readonly SignInManager<User> _signInManager;
-        private readonly IRepository<User> _userRepository;
+        private readonly IUserRepository _userRepository;
 
-        public LoginService(SignInManager<User> signInManager, IRepository<User> userRepository)
+        public LoginService(SignInManager<User> signInManager, IUserRepository userRepository)
         {
             _signInManager = signInManager;
             _userRepository = userRepository;
@@ -22,7 +22,7 @@ namespace _8bitstore_be.Services
 
         public async Task<AuthResponseDto> LoginAsync(UserLoginDto user)
         {
-            var findUser = (await _userRepository.FindAsync(u => u.UserName == user.UserName)).FirstOrDefault();
+            var findUser = await _userRepository.GetByUsernameAsync(user.UserName);
             if (findUser == null)
             {
                 return new AuthResponseDto
@@ -50,13 +50,20 @@ namespace _8bitstore_be.Services
                 isSuccess = true,
                 User = new UserDto
                 {
-                    UserName = findUser.UserName,
-                    Email = findUser.Email,
-                    Address = findUser.Address,
+                    UserName = findUser.UserName ?? "",
+                    Email = findUser.Email ?? "",
+                    Addresses = findUser.Addresses.Select(a => new AddressDto()
+                    {
+                        City = a.City,
+                        District = a.District,
+                        Ward = a.Ward,
+                        AddressDetail = a.AddressDetail,
+                        IsDefault = a.IsDefault,
+                        Recipent = a.Recipent,
+                        RecipentPhone = a.RecipentPhone,
+                    }).ToList(),
+                    PhoneNumber = findUser.PhoneNumber ?? "",
                     FullName = findUser.FullName,
-                    City = findUser.City,
-                    District = findUser.District,
-                    PhoneNumber = findUser.PhoneNumber
                 }
             };
         }
@@ -68,9 +75,19 @@ namespace _8bitstore_be.Services
             return new UserDto
             {
                 UserName = user.UserName,
-                Address = user.Address,
+                Addresses = user.Addresses.Select(a => new AddressDto()
+                {
+                    City = a.City,
+                    District = a.District,
+                    Ward = a.Ward,
+                    AddressDetail = a.AddressDetail,
+                    Recipent = a.Recipent,
+                    RecipentPhone = a.RecipentPhone,
+                    IsDefault = a.IsDefault
+                }).ToList(),
                 FullName = user.FullName,
-                Email = user.Email
+                Email = user.Email,
+                PhoneNumber = user.PhoneNumber,
             };
         }
 

@@ -4,7 +4,6 @@ namespace _8bitstore_be.DTO.Product
 {
     public class ProductDto
     {
-        [Required]
         public string ProductId { get; set; }
         public int StockNum { get; set; }
         public decimal Price { get; set; }
@@ -16,5 +15,9 @@ namespace _8bitstore_be.DTO.Product
         public string ProductName { get; set; }
         public ICollection<string> ImgUrl { get; set; }
         public DateTime ImportDate { get; set; }
+        public double Weight { get; set; }
+        public string? Color { get; set; }
+        public string? Dimension { get; set; }
+        public string? InternalStorage { get; set; }
     }
 }

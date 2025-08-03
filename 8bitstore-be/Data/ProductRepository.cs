@@ -15,5 +15,11 @@ namespace _8bitstore_be.Data
         {
             return await _context.Products.Where(p => p.ProductName.Contains(name)).ToListAsync();
         }
+
+        /*
+        public async Task<IEnumerable<Product>> GetProductsAsAdminAsync()
+        {
+            return await _context.Products.ToListAsync();
+        }*/
     }
 } 

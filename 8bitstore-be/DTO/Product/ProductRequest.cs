@@ -13,5 +13,6 @@
         public ICollection<string>? Genres { get; set; }
         public ICollection<string>? Type { get; set; }
         public ICollection<string>? Platforms { get; set; }
+        public int Page  { get; set; }
     }
 }

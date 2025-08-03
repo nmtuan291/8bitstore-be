@@ -53,7 +53,7 @@ namespace _8bitstore_be.Services
             
             string emailBody = $@"
                 <h2>Xác nhận đã đặt đơn hàng {orderId}</h2>
-                <p>Cảm ơn vì đã đặt hành, {user.FullName}!</p>
+                <p>Cảm ơn vì đã đặt hàng, {user.FullName}!</p>
                 <p><strong>Ngày đặt:</strong> {newOrder.OrderDate}</p>
                 <p><strong>Trạng thái:</strong> {newOrder.Status}</p>
                 <h3>Danh sách hàng:</h3>
@@ -62,7 +62,7 @@ namespace _8bitstore_be.Services
                 </ul>
                 <p><strong>Tổng cộng:</strong> {newOrder.Total:C}</p>
             ";
-            await _emailService.SendEmailAsync(userEmail, subject, emailBody);
+            await _emailService.SendEmailAsync(userEmail, emailBody, subject);
         }
 
         public async Task<ICollection<OrderDto>> GetOrderAsync(string userId)
@@ -86,6 +86,29 @@ namespace _8bitstore_be.Services
             }).OrderBy(x => x.OrderDate).ToList();
         }
 
+        public async Task<ICollection<OrderDto>> GetOrdersAsync()
+        {
+            var orders = await _orderRepository.GetAllAsync();
+            return orders.Select(x => new OrderDto
+            {
+                Items = x.OrderProducts.Select(p => new OrderItemDto
+                {
+                    ProductId = p.ProductId,
+                    Quantity = p.Quantity,
+                    ProductName = p.Product?.ProductName,
+                    Price = p.UnitPrice,
+                    ImgUrl = p.Product?.ImgUrl
+                }).ToList(),
+                Total = x.Total,
+                Status = x.Status,
+                OrderDate = x.OrderDate,
+                DeliveryDate = x.DeliveryDate,
+                OrderId = x.Id,
+                user = x.User.FullName,
+                phone = x.User.PhoneNumber,
+            }).OrderBy(x => x.OrderDate).ToList();
+        }
+        
         public async Task ChangeOrderStatusAsync(OrderDto request)
         {
             var orders = await _orderRepository.FindAsync(o => o.Id == request.OrderId);

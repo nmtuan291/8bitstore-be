@@ -16,6 +16,16 @@ namespace _8bitstore_be.Data
             return await _context.Orders
                 .Where(o => o.UserId == userId)
                 .Include(o => o.OrderProducts)
+                    .ThenInclude(op => op.Product)
+                .ToListAsync();
+        }
+        
+        public async Task<IEnumerable<Order>> GetAllAsync()
+        {
+            return await _context.Orders
+                .Include(o => o.OrderProducts)
+                    .ThenInclude(op => op.Product)
+                .Include(o => o.User)
                 .ToListAsync();
         }
     }

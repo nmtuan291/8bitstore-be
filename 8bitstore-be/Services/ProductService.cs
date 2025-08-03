@@ -8,25 +8,27 @@ using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using StackExchange.Redis;
 
 namespace _8bitstore_be.Services
 {
     public class ProductService : IProductService
     {
         private readonly IProductRepository _productRepository;
-
-        public ProductService(IProductRepository productRepository)
+        private readonly IConnectionMultiplexer _redis;
+        public ProductService(IProductRepository productRepository, IConnectionMultiplexer redis)
         {
             _productRepository = productRepository;
+            _redis = redis;
         }
 
-        public async Task<IEnumerable<ProductDto>> GetProductsAsync(ProductRequest request)
+        public async Task<PaginatedResult> GetProductsAsync(ProductRequest request)
         {
             var products = await _productRepository.GetAllAsync();
             var filtered = products.AsQueryable();
 
             if (!string.IsNullOrEmpty(request.ProductName))
-                filtered = filtered.Where(p => p.ProductName == request.ProductName);
+                filtered = filtered.Where(p => p.ProductName.ToLower().Contains(request.ProductName.ToLower()));
             if (request.MinPrice.HasValue)
                 filtered = filtered.Where(p => p.Price >= request.MinPrice);
             if (request.MaxPrice.HasValue)
@@ -46,22 +48,54 @@ namespace _8bitstore_be.Services
             if (request.SortByDate.HasValue && request.SortByDate != 0)
                 filtered = filtered.OrderBy(p => p.ImportDate);
 
-            return filtered.Select(p => new ProductDto
+            int pageSize = 10;
+            int totalCount = filtered.Count();
+            int totalPages = (int)Math.Ceiling((double)totalCount / pageSize);
+            
+            var result = new PaginatedResult()
+            {
+                Products = filtered
+                    .Skip((request.Page - 1) * pageSize)
+                    .Take(pageSize)
+                    .Select(p => new ProductDto
+                    {
+                        ProductId = p.ProductID,
+                        ProductName = p.ProductName,
+                        Price = p.Price,
+                        Platform = p.Platform,
+                        Type = p.Type,
+                        Genre = p.Genre,
+                        Description = p.Description,
+                        ImportDate = p.ImportDate,
+                        ImgUrl = p.ImgUrl,
+                        Manufacturer = p.Manufacturer,
+                        StockNum = p.StockNum
+                    }).ToList(),
+                PageSize = pageSize,
+                CurrentPage = request.Page,
+                TotalPages = totalPages
+            };
+
+            return result;
+        }
+
+        public async Task<IEnumerable<ProductDto>> GetAllProductAsync()
+        {
+            var products = await _productRepository.GetAllAsync();
+            return products.Select(p => new ProductDto()
             {
                 ProductId = p.ProductID,
                 ProductName = p.ProductName,
-                Price = p.Price,
-                Platform = p.Platform,
-                Type = p.Type,
-                Genre = p.Genre,
                 Description = p.Description,
-                ImportDate = p.ImportDate,
+                Price = p.Price,
                 ImgUrl = p.ImgUrl,
+                ImportDate = p.ImportDate,
+                Genre = p.Genre,
                 Manufacturer = p.Manufacturer,
                 StockNum = p.StockNum
-            }).ToList();
+            });
         }
-
+    
         public async Task<ProductDto> GetProductAsync(string productId)
         {
             var product = await _productRepository.GetByIdAsync(productId);
@@ -99,14 +133,19 @@ namespace _8bitstore_be.Services
                 ImgUrl = product.ImgUrl,
                 StockNum = product.StockNum,
             };
+            var db = _redis.GetDatabase();
+            await db.SortedSetAddAsync("products", newProduct.ProductName, 0);
+            
             await _productRepository.AddAsync(newProduct);
             await _productRepository.SaveChangesAsync();
         }
 
         public async Task<IEnumerable<string>> GetSuggestionAsync(string query)
         {
-            var products = await _productRepository.GetProductsByNameAsync(query);
-            return products.Select(p => p.ProductName).Take(10);
+            var db = _redis.GetDatabase();
+            query = query.ToLower();
+            var productName = await db.SortedSetRangeByValueAsync("products", query, query + char.MaxValue);
+            return productName.Select(p => p.ToString());
         }
     }
 }

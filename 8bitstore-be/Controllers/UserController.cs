@@ -33,16 +33,6 @@ namespace _8bitstore_be.Controllers
         [HttpPost("signup")]
         public async Task<IActionResult> SignUp([FromBody] UserForRegistrationDto user)
         {
-            if (user == null)
-            {
-                return BadRequest("User data is required");
-            }
-
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(ModelState);
-            }
-
             AuthResponseDto response = await _registrationService.SignupAsync(user);
 
             if (!response.isSuccess)
@@ -50,24 +40,12 @@ namespace _8bitstore_be.Controllers
                 return BadRequest(response.Errors);
             }
 
-            return Ok("Sign up successfully");
+            return Ok();
         }
  
         [HttpPost("login")]
         public async Task<IActionResult> Login([FromBody] UserLoginDto user)
         {
-            Console.WriteLine("asadasdasd");
-
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(ModelState);
-            }
-
-            if (user == null)
-            {
-                return BadRequest("User data is required");
-            }
-
             AuthResponseDto response = await _loginService.LoginAsync(user);
 
             if (response.User == null)
@@ -82,7 +60,7 @@ namespace _8bitstore_be.Controllers
             }
 
 
-            return Ok("Login successful");
+            return Ok();
         }
 
         [Authorize]
@@ -109,30 +87,49 @@ namespace _8bitstore_be.Controllers
         }
         
         [Authorize]
-        [HttpPatch("update-address")]
-        public async Task<IActionResult> UpdateAddress([FromBody] UserDto request)
+        [HttpPut("address/update")]
+        public async Task<IActionResult> UpdateAddress([FromBody] AddressDto address)
         {
-            if (!ModelState.IsValid)
-            {
-                return ValidationProblem(ModelState);
-            }
-
-            var user = User.FindFirst(ClaimTypes.NameIdentifier)?.Value ?? null;
-             
-            if (string.IsNullOrEmpty(user))
-            {
-                return Unauthorized();
-            }
-
             try
             {
-                await _userService.ChangeAddressAsync(user, request.Address, request.City, request.District, request.SubDistrict);
-                return Ok("Change address successfully");
+                await _userService.ChangeAddressAsync(address);
+                return Ok();
             }
             catch (Exception ex)
             {
                 return StatusCode(500, ex.Message);
             }
+        }
+
+        [Authorize]
+        [HttpPost("address/add")]
+        public async Task<IActionResult> AddAddress([FromBody] AddressDto address)
+        {
+            var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value ?? null;
+            if (string.IsNullOrEmpty(userId))
+                return Unauthorized();
+            
+            await _userService.AddAddressAsync(address, userId);
+            return Ok();
+        }
+
+        [Authorize]
+        [HttpGet("address")]
+        public async Task<IActionResult> GetAddress()
+        {
+            var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value ?? null;
+            if (string.IsNullOrEmpty(userId))
+                return Unauthorized();
+            var addresses = await _userService.GetAddressesByUserIdAsync(userId);
+            return Ok(addresses);
+        }
+
+        [Authorize]
+        [HttpDelete("address/delete/{addressId}")]
+        public async Task<IActionResult> DeleteAddress(Guid addressId)
+        {
+            await _userService.DeleteAddressAsync(addressId);
+            return Ok();
         }
         
         [Authorize]

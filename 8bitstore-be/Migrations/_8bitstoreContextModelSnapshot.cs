@@ -154,6 +154,50 @@ namespace _8bitstore_be.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
+            modelBuilder.Entity("_8bitstore_be.Models.Address", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("AddressDetail")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("City")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("District")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<bool>("IsDefault")
+                        .HasColumnType("boolean");
+
+                    b.Property<string>("Recipent")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("RecipentPhone")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("Ward")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("Addresses");
+                });
+
             modelBuilder.Entity("_8bitstore_be.Models.Cart", b =>
                 {
                     b.Property<string>("Id")
@@ -294,8 +338,14 @@ namespace _8bitstore_be.Migrations
                     b.Property<string>("ProductID")
                         .HasColumnType("text");
 
+                    b.Property<string>("Color")
+                        .HasColumnType("text");
+
                     b.Property<string>("Description")
                         .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("Dimension")
                         .HasColumnType("text");
 
                     b.PrimitiveCollection<string[]>("Genre")
@@ -308,6 +358,9 @@ namespace _8bitstore_be.Migrations
 
                     b.Property<DateTime>("ImportDate")
                         .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("InternalStorage")
+                        .HasColumnType("text");
 
                     b.Property<string>("Manufacturer")
                         .IsRequired()
@@ -330,6 +383,9 @@ namespace _8bitstore_be.Migrations
                     b.Property<string>("Type")
                         .IsRequired()
                         .HasColumnType("text");
+
+                    b.Property<double>("Weight")
+                        .HasColumnType("double precision");
 
                     b.HasKey("ProductID");
 
@@ -376,17 +432,8 @@ namespace _8bitstore_be.Migrations
                     b.Property<int>("AccessFailedCount")
                         .HasColumnType("integer");
 
-                    b.Property<string>("Address")
-                        .HasColumnType("text");
-
-                    b.Property<string>("City")
-                        .HasColumnType("text");
-
                     b.Property<string>("ConcurrencyStamp")
                         .IsConcurrencyToken()
-                        .HasColumnType("text");
-
-                    b.Property<string>("District")
                         .HasColumnType("text");
 
                     b.Property<string>("Email")
@@ -424,9 +471,6 @@ namespace _8bitstore_be.Migrations
                         .HasColumnType("boolean");
 
                     b.Property<string>("SecurityStamp")
-                        .HasColumnType("text");
-
-                    b.Property<string>("SubDistrict")
                         .HasColumnType("text");
 
                     b.Property<bool>("TwoFactorEnabled")
@@ -567,6 +611,17 @@ namespace _8bitstore_be.Migrations
                         .IsRequired();
                 });
 
+            modelBuilder.Entity("_8bitstore_be.Models.Address", b =>
+                {
+                    b.HasOne("_8bitstore_be.Models.User", "User")
+                        .WithMany("Addresses")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("User");
+                });
+
             modelBuilder.Entity("_8bitstore_be.Models.Cart", b =>
                 {
                     b.HasOne("_8bitstore_be.Models.User", "User")
@@ -695,6 +750,11 @@ namespace _8bitstore_be.Migrations
             modelBuilder.Entity("_8bitstore_be.Models.Order", b =>
                 {
                     b.Navigation("OrderProducts");
+                });
+
+            modelBuilder.Entity("_8bitstore_be.Models.User", b =>
+                {
+                    b.Navigation("Addresses");
                 });
 
             modelBuilder.Entity("_8bitstore_be.Models.Wishlist", b =>

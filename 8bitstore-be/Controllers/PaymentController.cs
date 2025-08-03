@@ -25,7 +25,7 @@ namespace _8bitstore_be.Controllers
         {
             var url = _vnPayService.CreatePaymentUrl(HttpContext, request.Amount);
 
-            return Ok(url);
+            return Ok(new { result = url });
         }
 
         [HttpPost("save-payment-info")]

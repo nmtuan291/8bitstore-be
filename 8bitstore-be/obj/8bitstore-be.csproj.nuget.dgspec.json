@@ -1,20 +1,20 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\Admin\\source\\repos\\8bitstore-be\\8bitstore-be\\8bitstore-be.csproj": {}
+    "/home/tuan/RiderProjects/8bitstore-be/8bitstore-be/8bitstore-be.csproj": {}
   },
   "projects": {
-    "C:\\Users\\Admin\\source\\repos\\8bitstore-be\\8bitstore-be\\8bitstore-be.csproj": {
+    "/home/tuan/RiderProjects/8bitstore-be/8bitstore-be/8bitstore-be.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\Admin\\source\\repos\\8bitstore-be\\8bitstore-be\\8bitstore-be.csproj",
+        "projectUniqueName": "/home/tuan/RiderProjects/8bitstore-be/8bitstore-be/8bitstore-be.csproj",
         "projectName": "8bitstore-be",
-        "projectPath": "C:\\Users\\Admin\\source\\repos\\8bitstore-be\\8bitstore-be\\8bitstore-be.csproj",
-        "packagesPath": "C:\\Users\\Admin\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\Admin\\source\\repos\\8bitstore-be\\8bitstore-be\\obj\\",
+        "projectPath": "/home/tuan/RiderProjects/8bitstore-be/8bitstore-be/8bitstore-be.csproj",
+        "packagesPath": "/home/tuan/.nuget/packages/",
+        "outputPath": "/home/tuan/RiderProjects/8bitstore-be/8bitstore-be/obj/",
         "projectStyle": "PackageReference",
         "configFilePaths": [
-          "C:\\Users\\Admin\\AppData\\Roaming\\NuGet\\NuGet.Config"
+          "/home/tuan/.nuget/NuGet/NuGet.Config"
         ],
         "originalTargetFrameworks": [
           "net8.0"
@@ -37,7 +37,8 @@
           "enableAudit": "true",
           "auditLevel": "low",
           "auditMode": "direct"
-        }
+        },
+        "SdkAnalysisLevel": "9.0.300"
       },
       "frameworks": {
         "net8.0": {
@@ -89,6 +90,10 @@
               "target": "Package",
               "version": "[9.0.3, )"
             },
+            "StackExchange.Redis": {
+              "target": "Package",
+              "version": "[2.8.41, )"
+            },
             "Swashbuckle.AspNetCore": {
               "target": "Package",
               "version": "[6.6.2, )"
@@ -109,6 +114,20 @@
           ],
           "assetTargetFallback": true,
           "warn": true,
+          "downloadDependencies": [
+            {
+              "name": "Microsoft.AspNetCore.App.Ref",
+              "version": "[8.0.16, 8.0.16]"
+            },
+            {
+              "name": "Microsoft.NETCore.App.Host.linux-x64",
+              "version": "[8.0.16, 8.0.16]"
+            },
+            {
+              "name": "Microsoft.NETCore.App.Ref",
+              "version": "[8.0.16, 8.0.16]"
+            }
+          ],
           "frameworkReferences": {
             "Microsoft.AspNetCore.App": {
               "privateAssets": "none"
@@ -117,7 +136,7 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "C:\\Users\\Admin\\.dotnet\\sdk\\8.0.410/PortableRuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "/home/tuan/.dotnet/sdk/9.0.300/PortableRuntimeIdentifierGraph.json"
         }
       }
     }

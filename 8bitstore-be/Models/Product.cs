@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using Org.BouncyCastle.Crypto.Generators;
 
 namespace _8bitstore_be.Models
 {
@@ -26,10 +27,17 @@ namespace _8bitstore_be.Models
 
         [Required]
         public string ProductName { get; set; }
-
+        
+        [Required]
+        public double Weight { get; set; }
+        
         public ICollection<string> ImgUrl { get; set; }
 
         [Required]
         public DateTime ImportDate { get; set; }
+        
+        public string? Color { get; set; }
+        public string? Dimension { get; set; }
+        public string? InternalStorage { get; set; }
     }
 }
