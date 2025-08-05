@@ -1,0 +1,96 @@
+version: '3.8'
+
+services:
+  # PostgreSQL Database
+  postgres:
+    image: postgres:15
+    container_name: 8bitstore-postgres
+    environment:
+      POSTGRES_DB: 8bitstore
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: your_password_here
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - 8bitstore-network
+
+  # Redis Cache
+  redis:
+    image: redis:7-alpine
+    container_name: 8bitstore-redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    networks:
+      - 8bitstore-network
+
+  # Neo4j Graph Database
+  neo4j:
+    image: neo4j:5
+    container_name: 8bitstore-neo4j
+    environment:
+      NEO4J_AUTH: neo4j/your_password_here
+      NEO4J_PLUGINS: '["apoc"]'
+    ports:
+      - "7474:7474"  # HTTP
+      - "7687:7687"  # Bolt
+    volumes:
+      - neo4j_data:/data
+      - neo4j_logs:/logs
+      - neo4j_import:/var/lib/neo4j/import
+      - neo4j_plugins:/plugins
+    networks:
+      - 8bitstore-network
+
+  # Elasticsearch
+  elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch:8.11.0
+    container_name: 8bitstore-elasticsearch
+    environment:
+      - discovery.type=single-node
+      - xpack.security.enabled=false
+      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+    ports:
+      - "9200:9200"
+    volumes:
+      - elasticsearch_data:/usr/share/elasticsearch/data
+    networks:
+      - 8bitstore-network
+
+  # .NET Application
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: 8bitstore-api
+    ports:
+      - "5000:80"
+      - "5001:443"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ConnectionStrings__WebApiDatabase=Host=postgres;Database=8bitstore;Username=postgres;Password=your_password_here
+      - Redis__ConnectionString=redis:6379
+    depends_on:
+      - postgres
+      - redis
+      - neo4j
+      - elasticsearch
+    networks:
+      - 8bitstore-network
+    restart: unless-stopped
+
+volumes:
+  postgres_data:
+  redis_data:
+  neo4j_data:
+  neo4j_logs:
+  neo4j_import:
+  neo4j_plugins:
+  elasticsearch_data:
+
+networks:
+  8bitstore-network:
+    driver: bridge 
