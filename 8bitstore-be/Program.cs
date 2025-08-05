@@ -91,6 +91,20 @@ if (!string.IsNullOrEmpty(redisConnectionString))
 
 var app = builder.Build();
 
+using (var scope = app.Services.CreateScope())
+{
+    var context = scope.ServiceProvider.GetRequiredService<_8bitstoreContext>();
+    try
+    {
+        context.Database.Migrate();
+        Console.WriteLine("Database migrations applied successfully.");
+    }
+    catch (Exception ex)
+    {
+        Console.WriteLine($"Error applying migrations: {ex.Message}");
+    }
+}
+
 app.UseCors("AllowFrontend");
 
 // Configure the HTTP request pipeline.
