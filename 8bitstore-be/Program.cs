@@ -77,8 +77,17 @@ builder.Services.AddScoped<IOrderService, OrderService>();
 builder.Services.AddScoped<IEmailService, EmailService>();
 builder.Services.AddScoped<IReviewService, ReviewService>();
 
+// Configure Redis with retry logic
 var redisConnectionString = builder.Configuration.GetSection("Redis:ConnectionString").Value;
-builder.Services.AddSingleton<IConnectionMultiplexer>(ConnectionMultiplexer.Connect(redisConnectionString));
+if (!string.IsNullOrEmpty(redisConnectionString))
+{
+    var redisConfig = ConfigurationOptions.Parse(redisConnectionString);
+    redisConfig.AbortOnConnectFail = false;
+    redisConfig.ConnectRetry = 5;
+    redisConfig.ReconnectRetryPolicy = new ExponentialRetry(5000);
+    
+    builder.Services.AddSingleton<IConnectionMultiplexer>(ConnectionMultiplexer.Connect(redisConfig));
+}
 
 var app = builder.Build();
 app.UseCors("AllowFrontend");
