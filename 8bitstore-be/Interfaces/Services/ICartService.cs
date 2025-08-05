@@ -7,6 +7,7 @@ namespace _8bitstore_be.Interfaces.Services
     {
         Task AddItemAsync(string userId, string productId, int quantity);
         Task<CartDto> GetCartAsync(string userId);
+        Task EmptyCartAsync(string userId);
         Task DeleteItemAsync(string userId, string productId);
     }
 } 

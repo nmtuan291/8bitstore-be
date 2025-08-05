@@ -63,6 +63,11 @@ namespace _8bitstore_be.Services
             await _cartRepository.SaveChangesAsync();
         }
 
+        public async Task EmptyCartAsync(string userId)
+        {
+           await _cartRepository.EmptyCartAsync(userId);
+        }
+
         public async Task<CartDto> GetCartAsync(string userId)
         {
             var cart = await _cartRepository.GetCartByUserIdAsync(userId);

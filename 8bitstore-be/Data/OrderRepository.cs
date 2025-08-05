@@ -20,13 +20,28 @@ namespace _8bitstore_be.Data
                 .ToListAsync();
         }
         
-        public async Task<IEnumerable<Order>> GetAllAsync()
+        public override async Task<IEnumerable<Order>> GetAllAsync()
         {
             return await _context.Orders
                 .Include(o => o.OrderProducts)
                     .ThenInclude(op => op.Product)
                 .Include(o => o.User)
                 .ToListAsync();
+        }
+
+        public override async Task AddAsync(Order entity)
+        {
+            foreach (var item in entity.OrderProducts)
+            {
+                var product = await _context.Products.SingleOrDefaultAsync(p => p.ProductID == item.ProductId);
+                if (product != null)
+                {
+                    product.StockNum -=  item.Quantity;
+                    product.WeeklySales += item.Quantity;
+                }
+            }
+            await base.AddAsync(entity);
+            await _context.SaveChangesAsync();
         }
     }
 } 

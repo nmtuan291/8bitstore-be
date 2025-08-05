@@ -32,7 +32,7 @@ namespace _8bitstore_be.Controllers
         }
 
         [HttpGet("get-all")]
-        public async Task<IActionResult> GetAllProduct([FromQuery] ProductRequest request)
+        public async Task<IActionResult> GetAllProduct()
         {
             var products = await _productService.GetAllProductAsync();
             return Ok(products);

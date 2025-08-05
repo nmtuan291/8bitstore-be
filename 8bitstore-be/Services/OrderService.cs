@@ -34,7 +34,7 @@ namespace _8bitstore_be.Services
                 DeliveryDate = null,
                 Status = order.Status,
                 Total = order.Total ?? 0,
-                OrderProducts = order.Items.Select(item => new OrderProduct
+                OrderProducts = (order.Items ?? new List<OrderItemDto>()).Select(item => new OrderProduct
                 {
                     Id = Guid.NewGuid().ToString(),
                     ProductId = item.ProductId,
@@ -43,13 +43,16 @@ namespace _8bitstore_be.Services
                     UnitPrice = item.Price
                 }).ToList()
             };
+            
             await _orderRepository.AddAsync(newOrder);
             await _orderRepository.SaveChangesAsync();
             
             // Send email after creating order
             string subject = $"Xác nhận đơn hàng {orderId}";
             var user = await _userManager.FindByIdAsync(userId);
-            string userEmail = user.Email;
+            if (user == null)
+                return;
+            string userEmail = user.Email ?? "";
             
             string emailBody = $@"
                 <h2>Xác nhận đã đặt đơn hàng {orderId}</h2>

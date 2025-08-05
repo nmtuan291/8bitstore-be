@@ -79,20 +79,10 @@ namespace _8bitstore_be.Controllers
             });
         }
         
-        [Authorize(Roles = "Admin")]   
+        [Authorize]   
         [HttpPatch("change-status/{orderId}")]
         public async Task<IActionResult> ChangeStatus(string orderId, [FromBody] string status)
         {
-            if (orderId == null)
-            {
-                return BadRequest("Missing order");
-            }
-
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(ModelState);
-            }
-
             try
             {
                 OrderDto order = new()

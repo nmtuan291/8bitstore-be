@@ -59,7 +59,7 @@ namespace _8bitstore_be.Controllers
             try
             {
                 await _wishlistService.AddItemAsync(productId, userId);
-                return Ok("Add item to wishlist successfully");
+                return Ok();
             }
             catch (Exception ex)
             {
@@ -86,7 +86,7 @@ namespace _8bitstore_be.Controllers
             try
             {
                 await _wishlistService.RemoveItemAsync(userId, productId);
-                return Ok("Remove item successfully");
+                return Ok();
             }
             catch (Exception ex)
             {

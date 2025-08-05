@@ -46,8 +46,12 @@ namespace _8bitstore_be.Services
             if (request.SortByPrice.HasValue && request.SortByPrice != 0)
                 filtered = filtered.OrderBy(p => p.Price);
             if (request.SortByDate.HasValue && request.SortByDate != 0)
-                filtered = filtered.OrderBy(p => p.ImportDate);
-
+                filtered = filtered.OrderByDescending(p => p.ImportDate);
+            if (request.SortByWeeklySales.HasValue && request.SortByWeeklySales != 0)
+                filtered = filtered.OrderByDescending(p => p.WeeklySales);
+            if (request.Top.HasValue)
+                filtered = filtered.Take(request.Top.Value);
+            
             int pageSize = 10;
             int totalCount = filtered.Count();
             int totalPages = (int)Math.Ceiling((double)totalCount / pageSize);
@@ -78,7 +82,7 @@ namespace _8bitstore_be.Services
 
             return result;
         }
-
+        
         public async Task<IEnumerable<ProductDto>> GetAllProductAsync()
         {
             var products = await _productRepository.GetAllAsync();
@@ -132,6 +136,7 @@ namespace _8bitstore_be.Services
                 ImportDate = DateTime.UtcNow,
                 ImgUrl = product.ImgUrl,
                 StockNum = product.StockNum,
+                WeeklySales = 0
             };
             var db = _redis.GetDatabase();
             await db.SortedSetAddAsync("products", newProduct.ProductName, 0);

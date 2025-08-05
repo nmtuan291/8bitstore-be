@@ -34,7 +34,7 @@ namespace _8bitstore_be.Controllers
             try
             {
                 await _cartService.AddItemAsync(userId, request.ProductId, request.Quantity);
-                return Ok("Add item to cart successfully");
+                return Ok();
             }
             catch (Exception ex)
             {
@@ -45,12 +45,23 @@ namespace _8bitstore_be.Controllers
         
         [Authorize]
         [HttpDelete("delete")]
-        public async Task<IActionResult> DeleteItem([FromQuery] string productId)
+        public async Task<IActionResult> DeleteItem([FromQuery] string? productId)
         {
             var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value ?? null;
+            if (string.IsNullOrEmpty(userId))
+            {
+                return  Unauthorized();
+            }
             try
             {
-                await _cartService.DeleteItemAsync(userId, productId);
+                if (!string.IsNullOrEmpty(productId))
+                {
+                    await _cartService.DeleteItemAsync(userId, productId);
+                }
+                else
+                {
+                    await _cartService.EmptyCartAsync(userId);
+                }
                 return Ok();
             }
             catch (Exception ex)

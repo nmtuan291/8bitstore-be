@@ -10,12 +10,25 @@ namespace _8bitstore_be.Data
     {
         public CartRepository(_8bitstoreContext context) : base(context) { }
 
-        public async Task<Cart> GetCartByUserIdAsync(string userId)
+        public async Task<Cart?> GetCartByUserIdAsync(string userId)
         {
             return await _context.Carts
                 .Include(c => c.CartItems)
                 .ThenInclude(ci => ci.Product)
                 .SingleOrDefaultAsync(c => c.UserId == userId);
         }
+
+        public async Task EmptyCartAsync(string userId)
+        {
+            var cart = await _context.Carts
+                .Include(c => c.CartItems)
+                .SingleOrDefaultAsync(c => c.UserId == userId);
+
+            if (cart != null)
+            {
+                _context.CartItems.RemoveRange(cart.CartItems);
+            }
+            await _context.SaveChangesAsync();
+        } 
     }
 } 

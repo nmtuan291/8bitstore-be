@@ -36,6 +36,9 @@ namespace _8bitstore_be.Models
         [Required]
         public DateTime ImportDate { get; set; }
         
+        [Required]
+        public int WeeklySales { get; set; }
+        
         public string? Color { get; set; }
         public string? Dimension { get; set; }
         public string? InternalStorage { get; set; }
