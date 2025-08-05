@@ -98,4 +98,6 @@ app.UseAuthorization();
 
 app.MapControllers();
 
-app.Run();
+// Configure for Render.com dynamic port assignment
+var port = Environment.GetEnvironmentVariable("PORT") ?? "80";
+app.Run($"http://0.0.0.0:{port}");

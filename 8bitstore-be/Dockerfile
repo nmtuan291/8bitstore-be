@@ -2,12 +2,11 @@
 FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 WORKDIR /src
 
-# Copy the project file first
-COPY 8bitstore-be.csproj ./
-RUN dotnet restore
-
-# Copy the rest of the source code
+# Copy everything first
 COPY . .
+
+# Restore dependencies
+RUN dotnet restore
 
 # Build the application
 RUN dotnet build -c Release -o /app/build
