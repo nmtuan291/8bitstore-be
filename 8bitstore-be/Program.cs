@@ -90,6 +90,7 @@ if (!string.IsNullOrEmpty(redisConnectionString))
 }
 
 var app = builder.Build();
+
 app.UseCors("AllowFrontend");
 
 // Configure the HTTP request pipeline.
@@ -107,6 +108,6 @@ app.UseAuthorization();
 
 app.MapControllers();
 
-// Configure for Render.com dynamic port assignment
-var port = Environment.GetEnvironmentVariable("PORT") ?? "80";
+// Configure for Render.com - use the PORT environment variable
+var port = Environment.GetEnvironmentVariable("PORT") ?? "8080";
 app.Run($"http://0.0.0.0:{port}");

@@ -322,3 +322,9 @@ C:/Users/Admin/source/repos/8bitstore-be/8bitstore-be/bin/Debug/net8.0/MimeKit.d
 /home/tuan/RiderProjects/8bitstore-be/8bitstore-be/obj/Debug/net8.0/staticwebassets.build.json.cache
 /home/tuan/RiderProjects/8bitstore-be/8bitstore-be/obj/Debug/net8.0/staticwebassets.build.endpoints.json
 /home/tuan/RiderProjects/8bitstore-be/8bitstore-be/obj/Debug/net8.0/8bitstor.64453EB0.Up2Date
+/home/tuan/RiderProjects/8bitstore-be/8bitstore-be/bin/Debug/net8.0/publish/web.config
+/home/tuan/RiderProjects/8bitstore-be/8bitstore-be/bin/Debug/net8.0/publish/8bitstore-be.deps.json
+/home/tuan/RiderProjects/8bitstore-be/8bitstore-be/bin/Debug/net8.0/publish/8bitstore-be.runtimeconfig.json
+/home/tuan/RiderProjects/8bitstore-be/8bitstore-be/bin/Debug/net8.0/publish/8bitstore-be.staticwebassets.endpoints.json
+/home/tuan/RiderProjects/8bitstore-be/8bitstore-be/bin/Debug/net8.0/publish/appsettings.Development.json
+/home/tuan/RiderProjects/8bitstore-be/8bitstore-be/bin/Debug/net8.0/publish/appsettings.json
