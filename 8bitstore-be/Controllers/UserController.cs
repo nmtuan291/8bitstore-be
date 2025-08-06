@@ -50,7 +50,7 @@ namespace _8bitstore_be.Controllers
 
             if (response.User == null)
             {
-                return StatusCode(500, "An error occurred during login.");
+                return Unauthorized();
             }
 
 
