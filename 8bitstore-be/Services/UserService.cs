@@ -26,6 +26,15 @@ namespace _8bitstore_be.Services
             await _userRepository.UpdateAddressAsync(addressDto);
         }
 
+        public async Task<IEnumerable<string>> GetUserRoleAsync(string userId)
+        {
+            var user  = await _userManager.FindByIdAsync(userId);
+            if (user == null)
+                return new List<string>();
+            
+            return await _userManager.GetRolesAsync(user);
+        }
+
         public async Task AddAddressAsync(AddressDto addressDto, string userId)
         {
             await _userRepository.InsertAddressAsync(addressDto, userId);
@@ -46,7 +55,7 @@ namespace _8bitstore_be.Services
                 return;
             var token = await _userManager.GeneratePasswordResetTokenAsync(user);
             
-            // Not done
+            // TO DO
         }
 
         public async Task<IEnumerable<AddressDto>> GetAddressesByUserIdAsync(string userId)

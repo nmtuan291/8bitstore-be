@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("8bitstore-be")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+0eaae6369a8697df978a450c6047750f1022eef6")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+d7183f0b3a1d46e796b449b7d612928fb5be40ea")]
 [assembly: System.Reflection.AssemblyProductAttribute("8bitstore-be")]
 [assembly: System.Reflection.AssemblyTitleAttribute("8bitstore-be")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

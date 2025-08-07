@@ -41,7 +41,7 @@ namespace _8bitstore_be.Services
             return vnpay.CreateRequestUrl(_configuration["Vnpay:BaseUrl"], _configuration["Vnpay:HashSecret"]);
         }
 
-        public async Task<StatusResponse<string>> savePaymentAsync(VnPayResultDto result, string userId)
+        public async Task<StatusResponse<string>> SavePaymentAsync(VnPayResultDto result, string userId)
         {
             var vnPay = new VnPay();
             vnPay.AddResponseData("vnp_TmnCode", result.TmnCode);
@@ -56,6 +56,7 @@ namespace _8bitstore_be.Services
             vnPay.AddResponseData("vnp_TransactionStatus", result.TransactionStatus);
             vnPay.AddResponseData("vnp_TxnRef", result.TxnRef);
             vnPay.AddResponseData("vnp_SecureHashType", "SHA512");
+
             bool validateResult = vnPay.ValidateSignature(result.SecureHash, _configuration["Vnpay:HashSecret"]);
             if (!validateResult)
             {
@@ -65,6 +66,7 @@ namespace _8bitstore_be.Services
                     Message = "Invalid secure hash"
                 };
             }
+            
             if (!DateTime.TryParseExact(result.PayDate, "yyyyMMddHHmmss", CultureInfo.InvariantCulture, DateTimeStyles.None, out DateTime payDate))
             {
                 throw new ArgumentException("Invalid PayDate format. Expected yyyyMMddHHmmss.");
@@ -86,6 +88,16 @@ namespace _8bitstore_be.Services
             };
             await _paymentVnPayRepository.AddAsync(payment);
             await _paymentVnPayRepository.SaveChangesAsync();
+            
+            if (result.TransactionStatus != "00")
+            {
+                return new StatusResponse<string>()
+                {
+                    Status = "ERROR",
+                    Message = result.TransactionStatus
+                };
+            }
+            
             return new StatusResponse<string>
             {
                 Status = "SUCCESS",

@@ -46,7 +46,7 @@ namespace _8bitstore_be.Controllers
 
             try
             {
-                StatusResponse<string> response = await _vnPayService.savePaymentAsync(request, userId);
+                StatusResponse<string> response = await _vnPayService.SavePaymentAsync(request, userId);
                 return Ok(response);
             }
             catch (Exception ex)

@@ -86,8 +86,8 @@ namespace _8bitstore_be.Services
                     IsDefault = a.IsDefault
                 }).ToList(),
                 FullName = user.FullName,
-                Email = user.Email,
-                PhoneNumber = user.PhoneNumber,
+                Email = user.Email ?? "",
+                PhoneNumber = user.PhoneNumber ?? "",
             };
         }
 

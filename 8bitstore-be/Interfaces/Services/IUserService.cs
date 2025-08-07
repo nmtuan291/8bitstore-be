@@ -11,5 +11,6 @@ namespace _8bitstore_be.Interfaces.Services
         Task AddAddressAsync(AddressDto addressDto, string userId);
         Task<IEnumerable<AddressDto>> GetAddressesByUserIdAsync(string userId);
         Task DeleteAddressAsync(Guid id);
+        Task<IEnumerable<string>> GetUserRoleAsync(string userId);
     }
 } 

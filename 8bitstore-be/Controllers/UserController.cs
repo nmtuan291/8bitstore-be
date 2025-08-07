@@ -68,19 +68,15 @@ namespace _8bitstore_be.Controllers
         public async Task<IActionResult> GetUser()
         {
             var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value ?? null;
-            Console.WriteLine(userId);
-
-            if (!ModelState.IsValid || userId == null)
+            if (userId == null)
             {
-                return BadRequest("Missing username");
+                return BadRequest(new { error = "Missing username"});
             }
-
+            
             var user = await _loginService.GetUserAsync(userId);
-
             if (user == null)
             {
-                Console.WriteLine("dfsfsdfsdfdsff");
-                return NotFound("Cannot find the user");
+                return NotFound();
             }
 
             return Ok(user);
@@ -130,6 +126,18 @@ namespace _8bitstore_be.Controllers
         {
             await _userService.DeleteAddressAsync(addressId);
             return Ok();
+        }
+
+        [Authorize]
+        [HttpGet("role")]
+        public async Task<IActionResult> GetRole()
+        {
+            var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value ?? null;
+            if (string.IsNullOrEmpty(userId))
+                return Unauthorized();
+            
+            var roles = await _userService.GetUserRoleAsync(userId);
+            return Ok(roles);
         }
         
         [Authorize]

@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "dgSpecHash": "ivEPEw2ho6hQQMFCHIiQSlmlFmRDeIX2Y1Fpn2Zzw/4Imb2g7Ffoayk2ouSjM9/5EmnVgaofq2HK7erEhGOluQ==",
+  "dgSpecHash": "X6kdlDRjtkA=",
   "success": true,
   "projectFilePath": "/home/tuan/RiderProjects/8bitstore-be/8bitstore-be/8bitstore-be.csproj",
   "expectedPackageFiles": [
@@ -105,14 +105,19 @@
     "/home/tuan/.nuget/packages/system.text.encodings.web/9.0.2/system.text.encodings.web.9.0.2.nupkg.sha512",
     "/home/tuan/.nuget/packages/system.text.json/9.0.2/system.text.json.9.0.2.nupkg.sha512",
     "/home/tuan/.nuget/packages/system.threading.channels/7.0.0/system.threading.channels.7.0.0.nupkg.sha512",
-    "/home/tuan/.nuget/packages/system.valuetuple/4.5.0/system.valuetuple.4.5.0.nupkg.sha512"
+    "/home/tuan/.nuget/packages/system.valuetuple/4.5.0/system.valuetuple.4.5.0.nupkg.sha512",
+    "/home/tuan/.nuget/packages/microsoft.netcore.app.ref/8.0.16/microsoft.netcore.app.ref.8.0.16.nupkg.sha512",
+    "/home/tuan/.nuget/packages/microsoft.aspnetcore.app.ref/8.0.16/microsoft.aspnetcore.app.ref.8.0.16.nupkg.sha512",
+    "/home/tuan/.nuget/packages/microsoft.netcore.app.host.linux-x64/8.0.16/microsoft.netcore.app.host.linux-x64.8.0.16.nupkg.sha512"
   ],
   "logs": [
     {
       "code": "NU1903",
       "level": "Warning",
-      "warningLevel": 1,
       "message": "Package 'Microsoft.AspNetCore.Identity' 2.3.0 has a known high severity vulnerability, https://github.com/advisories/GHSA-2865-hh9g-w894",
+      "projectPath": "/home/tuan/RiderProjects/8bitstore-be/8bitstore-be/8bitstore-be.csproj",
+      "warningLevel": 1,
+      "filePath": "/home/tuan/RiderProjects/8bitstore-be/8bitstore-be/8bitstore-be.csproj",
       "libraryId": "Microsoft.AspNetCore.Identity",
       "targetGraphs": [
         "net8.0"

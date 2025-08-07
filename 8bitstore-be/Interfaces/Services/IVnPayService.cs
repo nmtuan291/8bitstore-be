@@ -8,6 +8,6 @@ namespace _8bitstore_be.Interfaces.Services
     public interface IVnPayService
     {
         string CreatePaymentUrl(HttpContext context, string amount);
-        Task<StatusResponse<string>> savePaymentAsync(VnPayResultDto result, string userId);
+        Task<StatusResponse<string>> SavePaymentAsync(VnPayResultDto result, string userId);
     }
 } 
