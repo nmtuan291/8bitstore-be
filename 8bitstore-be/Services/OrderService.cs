@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using _8bitstore_be.DTO.User;
 using Microsoft.AspNetCore.Identity;
 
 namespace _8bitstore_be.Services
@@ -27,9 +28,9 @@ namespace _8bitstore_be.Services
         {
             try
             {
-                if (string.IsNullOrEmpty(userId) || string.IsNullOrEmpty(order.OrderId))
+                if (string.IsNullOrEmpty(userId) || string.IsNullOrEmpty(order.OrderId) || order.AddressId == null)
                     return false;
-
+                
                 string orderId = order.OrderId;
                 Order newOrder = new()
                 {
@@ -39,6 +40,7 @@ namespace _8bitstore_be.Services
                     DeliveryDate = null,
                     Status = order.Status,
                     Total = order.Total ?? 0,
+                    AddressId = order.AddressId ?? Guid.Empty,
                     OrderProducts = (order.Items ?? new List<OrderItemDto>()).Select(item => new OrderProduct
                     {
                         Id = Guid.NewGuid().ToString(),
@@ -96,6 +98,18 @@ namespace _8bitstore_be.Services
                 OrderDate = x.OrderDate,
                 DeliveryDate = x.DeliveryDate,
                 OrderId = x.Id,
+                AddressId = x.AddressId,
+                Address = new AddressDto
+                {
+                    Id = x.AddressId,
+                    AddressDetail = x.Address?.AddressDetail,
+                    City = x.Address?.City,
+                    District = x.Address?.District,
+                    Ward = x.Address?.Ward,
+                    IsDefault = x.Address.IsDefault,
+                    Recipent = x.Address.Recipent,
+                    RecipentPhone = x.Address.RecipentPhone,
+                }
             }).OrderBy(x => x.OrderDate).ToList();
         }
 
@@ -119,6 +133,18 @@ namespace _8bitstore_be.Services
                 OrderId = x.Id,
                 user = x.User.FullName,
                 phone = x.User.PhoneNumber,
+                AddressId = x.AddressId,
+                Address = new AddressDto
+                {
+                    Id = x.AddressId,
+                    AddressDetail = x.Address?.AddressDetail,
+                    City = x.Address?.City,
+                    District = x.Address?.District,
+                    Ward = x.Address?.Ward,
+                    IsDefault = x.Address.IsDefault,
+                    Recipent = x.Address.Recipent,
+                    RecipentPhone = x.Address.RecipentPhone,
+                }
             }).OrderBy(x => x.OrderDate).ToList();
         }
         

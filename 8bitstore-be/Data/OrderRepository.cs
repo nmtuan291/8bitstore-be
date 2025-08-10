@@ -17,6 +17,7 @@ namespace _8bitstore_be.Data
                 .Where(o => o.UserId == userId)
                 .Include(o => o.OrderProducts)
                     .ThenInclude(op => op.Product)
+                .Include(o => o.Address)
                 .ToListAsync();
         }
         
@@ -26,6 +27,7 @@ namespace _8bitstore_be.Data
                 .Include(o => o.OrderProducts)
                     .ThenInclude(op => op.Product)
                 .Include(o => o.User)
+                .Include(o => o.Address)
                 .ToListAsync();
         }
 

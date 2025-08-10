@@ -24,6 +24,12 @@ namespace _8bitstore_be.Models
 
         [Required]
         public decimal Total {  get; set; }
+        
+        [Required]
+        public Guid AddressId { get; set; }
+        
+        [ForeignKey("AddressId")]
+        public Address Address { get; set; }
 
         public ICollection<OrderProduct> OrderProducts { get; set; }
 
