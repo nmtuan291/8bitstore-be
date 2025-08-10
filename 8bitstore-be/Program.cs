@@ -9,6 +9,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
+using _8bitstore_be.Middlewares;
 using Neo4j.Driver;
 using StackExchange.Redis;
 using Microsoft.AspNetCore.HttpOverrides;
@@ -81,6 +82,7 @@ builder.Services.AddScoped<IOrderService, OrderService>();
 builder.Services.AddScoped<IEmailService, EmailService>();
 builder.Services.AddScoped<IReviewService, ReviewService>();
 
+
 // Configure Redis with retry logic
 var redisConnectionString = builder.Configuration.GetSection("Redis:ConnectionString").Value;
 if (!string.IsNullOrEmpty(redisConnectionString))
@@ -103,6 +105,8 @@ if (app.Environment.IsProduction())
         ForwardedHeaders = Microsoft.AspNetCore.HttpOverrides.ForwardedHeaders.XForwardedFor | Microsoft.AspNetCore.HttpOverrides.ForwardedHeaders.XForwardedProto
     });
 }
+
+app.UseMiddleware<GlobalExceptionMiddleware>();
 
 using (var scope = app.Services.CreateScope())
 {

@@ -21,7 +21,7 @@ namespace _8bitstore_be.Controllers
         }
         
         [HttpPost("create-url")]
-        public IActionResult CreatePaymentUrlVnpay([FromBody] PaymentRequest request)
+        public IActionResult CreatePaymentUrlVnpay(PaymentRequest request)
         {
             var url = _vnPayService.CreatePaymentUrl(HttpContext, request.Amount);
 
@@ -29,30 +29,15 @@ namespace _8bitstore_be.Controllers
         }
 
         [HttpPost("save-payment-info")]
-        public async Task<IActionResult> SavePaymentVnPay([FromBody] VnPayResultDto request)
+        public async Task<IActionResult> SavePaymentVnPay(VnPayResultDto request)
         {
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(ModelState);
-            }
-           
-
             var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value ?? null;
 
-            if (userId == null)
-            {
-                return BadRequest("User ID cannot be found");
-            }
+            if (string.IsNullOrEmpty(userId))
+                return Unauthorized();
 
-            try
-            {
-                StatusResponse<string> response = await _vnPayService.SavePaymentAsync(request, userId);
-                return Ok(response);
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(500, ex.Message);
-            }
+            StatusResponse<string> response = await _vnPayService.SavePaymentAsync(request, userId);
+            return Ok(response);
         }
 
     }

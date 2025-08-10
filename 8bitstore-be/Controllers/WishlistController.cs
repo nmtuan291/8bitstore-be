@@ -24,74 +24,43 @@ namespace _8bitstore_be.Controllers
         public async Task<IActionResult> GetWishlist()
         {
             var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value ?? null;
+            if (string.IsNullOrEmpty(userId))
+                return Unauthorized();
 
-            if (userId == null)
-            {
-                return NotFound("Cannot find the user");
-            }
-
-            try
-            {
-                var wishlist = await _wishlistService.GetWishlistAsync(userId);
-                return Ok(wishlist);
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(500, "Internal Server Error");
-            }
+            var wishlist = await _wishlistService.GetWishlistAsync(userId);
+            return Ok(wishlist);
         }
         
         [Authorize]
         [HttpPost("add")]
         public async Task<IActionResult> AddItem([FromBody] string productId)
         {
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(ModelState);
-            }
             var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value ?? null;
+            if (string.IsNullOrEmpty(userId))
+                return Unauthorized();
 
-            if (userId == null)
-            {
-                return BadRequest("User does not exists");
-            }
-
-            try
-            {
-                await _wishlistService.AddItemAsync(productId, userId);
+            bool success = await _wishlistService.AddItemAsync(productId, userId);
+            
+            if (success)
                 return Ok();
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(500, ex.Message);
-            }
+            
+            return StatusCode(StatusCodes.Status500InternalServerError, new { message = "Failed to add item to wishlist" });
         }
         
         [Authorize]
         [HttpDelete("delete")]
-        public async Task<IActionResult> RemoveItem([FromQuery] string productId)
+        public async Task<IActionResult> RemoveItem(string productId)
         {
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(ModelState);
-            }
-
             var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value ?? null;
-            
-            if (userId == null)
-            {
-                return BadRequest("User does not exists");
-            }
+            if (string.IsNullOrEmpty(userId))
+                return Unauthorized();
 
-            try
-            {
-                await _wishlistService.RemoveItemAsync(userId, productId);
+            bool success = await _wishlistService.RemoveItemAsync(userId, productId);
+            
+            if (success)
                 return Ok();
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(500, ex.Message);
-            }
+            
+            return StatusCode(StatusCodes.Status500InternalServerError, new { message = "Failed to remove item from wishlist" });
         }
     }
 }

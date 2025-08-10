@@ -33,13 +33,17 @@ namespace _8bitstore_be.Services
             }).ToList();
         }
 
-        public async Task AddReviewAsync(string userId, ReviewDto review)
+        public async Task<bool> AddReviewAsync(string userId, ReviewDto review)
         {
-            var user = await _userRepository.GetByIdAsync(userId);
-            if (user == null)
-                throw new KeyNotFoundException("User does not exists");
             try
             {
+                if (string.IsNullOrEmpty(userId) || review == null || string.IsNullOrEmpty(review.ProductId))
+                    return false;
+
+                var user = await _userRepository.GetByIdAsync(userId);
+                if (user == null)
+                    return false;
+
                 Review newReview = new Review
                 {
                     Id = Guid.NewGuid().ToString(),
@@ -51,10 +55,11 @@ namespace _8bitstore_be.Services
                 };
                 await _reviewRepository.AddAsync(newReview);
                 await _reviewRepository.SaveChangesAsync();
+                return true;
             }
-            catch (Exception ex)
+            catch
             {
-                throw new Exception("Failed to save review", ex);
+                return false;
             }
         }
     }

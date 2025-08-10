@@ -21,9 +21,20 @@ namespace _8bitstore_be.Services
             _userManager = userManager;
         }
 
-        public async Task ChangeAddressAsync(AddressDto addressDto)
+        public async Task<bool> ChangeAddressAsync(AddressDto addressDto)
         {
-            await _userRepository.UpdateAddressAsync(addressDto);
+            try
+            {
+                if (addressDto == null || addressDto.Id == Guid.Empty)
+                    return false;
+
+                await _userRepository.UpdateAddressAsync(addressDto);
+                return true;
+            }
+            catch
+            {
+                return false;
+            }
         }
 
         public async Task<IEnumerable<string>> GetUserRoleAsync(string userId)
@@ -35,9 +46,20 @@ namespace _8bitstore_be.Services
             return await _userManager.GetRolesAsync(user);
         }
 
-        public async Task AddAddressAsync(AddressDto addressDto, string userId)
+        public async Task<bool> AddAddressAsync(AddressDto addressDto, string userId)
         {
-            await _userRepository.InsertAddressAsync(addressDto, userId);
+            try
+            {
+                if (addressDto == null || string.IsNullOrEmpty(userId))
+                    return false;
+
+                await _userRepository.InsertAddressAsync(addressDto, userId);
+                return true;
+            }
+            catch
+            {
+                return false;
+            }
         }
 
         public async Task ChangePasswordAsync(string userId, string newPassword, string currentPassword)
@@ -52,32 +74,40 @@ namespace _8bitstore_be.Services
         {
             var user = await _userRepository.GetByIdAsync(userId);
             if (user == null)
-                return;
-            var token = await _userManager.GeneratePasswordResetTokenAsync(user);
-            
-            // TO DO
+                throw new KeyNotFoundException("User does not exists");
+            string code = await _userManager.GeneratePasswordResetTokenAsync(user);
         }
 
         public async Task<IEnumerable<AddressDto>> GetAddressesByUserIdAsync(string userId)
         {
             var addresses = await _userRepository.GetAddressesByUserIdAsync(userId);
-
-            return addresses.Select(address => new AddressDto()
+            return addresses.Select(a => new AddressDto
             {
-                Id = address.Id,
-                AddressDetail = address.AddressDetail,
-                City = address.City,
-                District = address.District,
-                Ward = address.Ward,
-                Recipent = address.Recipent,
-                RecipentPhone = address.RecipentPhone,
-                IsDefault = address.IsDefault
+                Id = a.Id,
+                AddressDetail = a.AddressDetail,
+                City = a.City,
+                District = a.District,
+                Ward = a.Ward,
+                IsDefault = a.IsDefault,
+                Recipent = a.Recipent,
+                RecipentPhone = a.RecipentPhone
             });
         }
 
-        public async Task DeleteAddressAsync(Guid id)
+        public async Task<bool> DeleteAddressAsync(Guid id)
         {
-            await _userRepository.DeleteAddressById(id);
+            try
+            {
+                if (id == Guid.Empty)
+                    return false;
+
+                await _userRepository.DeleteAddressById(id);
+                return true;
+            }
+            catch
+            {
+                return false;
+            }
         }
     }
 }

@@ -20,13 +20,8 @@ namespace _8bitstore_be.Controllers
         }
 
         [HttpGet("get-products")]
-        public async Task<IActionResult> GetProducts([FromQuery] ProductRequest request)
+        public async Task<IActionResult> GetProducts(ProductRequest request)
         {
-            if (request == null)
-            {
-                return BadRequest("Request is empty");
-            }
-
             var products = await _productService.GetProductsAsync(request);
             return Ok(products);          
         }
@@ -39,50 +34,31 @@ namespace _8bitstore_be.Controllers
         }
 
         [HttpGet("get-product")]
-        public async Task<IActionResult> GetProduct([FromQuery] ProductRequest request)
+        public async Task<IActionResult> GetProduct(ProductRequest request)
         {
             if (request.ProductId == null)
-            {
-                return BadRequest("Product Id is missing.");
-            }
+                return BadRequest(new { error = "Product Id is missing." });
 
-            try
-            {
-                var product = await _productService.GetProductAsync(request.ProductId);
-                return Ok(product);
-            }
-            catch (KeyNotFoundException ex)
-            {
-                return BadRequest(ex.Message);
-            }
+            var product = await _productService.GetProductAsync(request.ProductId);
+            return Ok(product);
         }
         
         [HttpPost]
         public async Task<IActionResult> AddProduct([FromBody] ProductDto product)
         {
-            try
-            {
-                await _productService.AddProductAsync(product);
-                return Ok("Add product successfully");
-            }
-            catch(Exception ex)
-            {
-                return StatusCode(500, ex.Message);
-            }
+            bool success = await _productService.AddProductAsync(product);
+            
+            if (success)
+                return Ok();
+            
+            return StatusCode(StatusCodes.Status500InternalServerError, "Internal server error");
         }
 
         [HttpGet("get-suggestion")]
         public async Task<IActionResult> GetSuggestion([FromQuery] string query)
         {
-            try
-            {
-                IEnumerable<string> productNames = await _productService.GetSuggestionAsync(query);
-                return Ok(productNames);
-            }
-            catch(Exception ex)
-            {
-                return StatusCode(500, ex.Message);
-            }
+            IEnumerable<string> productNames = await _productService.GetSuggestionAsync(query);
+            return Ok(productNames);
         }
 
     }

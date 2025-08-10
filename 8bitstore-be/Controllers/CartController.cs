@@ -22,52 +22,38 @@ namespace _8bitstore_be.Controllers
         
         [Authorize]
         [HttpPost("add")]
-        public async Task<IActionResult> AddItem([FromBody] AddItemRequestDto request)  
+        public async Task<IActionResult> AddItem(AddItemRequestDto request)  
         {
             var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value ?? null;
+            if (string.IsNullOrEmpty(userId))
+                return Unauthorized();
 
-            if (userId == null || request.ProductId == null)
-            {
-                return BadRequest("User or product Id is missing.");
-            }
-
-            try
-            {
-                await _cartService.AddItemAsync(userId, request.ProductId, request.Quantity);
+            bool success = await _cartService.AddItemAsync(userId, request.ProductId, request.Quantity);
+            
+            if (success)
                 return Ok();
-            }
-            catch (Exception ex)
-            {
-                return BadRequest(ex.Message);
-            }
-           
+            
+            return StatusCode(StatusCodes.Status500InternalServerError, "Internal server error");
         }
         
         [Authorize]
         [HttpDelete("delete")]
-        public async Task<IActionResult> DeleteItem([FromQuery] string? productId)
+        public async Task<IActionResult> DeleteItem(string? productId)
         {
             var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value ?? null;
             if (string.IsNullOrEmpty(userId))
-            {
                 return  Unauthorized();
-            }
-            try
-            {
-                if (!string.IsNullOrEmpty(productId))
-                {
-                    await _cartService.DeleteItemAsync(userId, productId);
-                }
-                else
-                {
-                    await _cartService.EmptyCartAsync(userId);
-                }
+
+            bool success;
+            if (!string.IsNullOrEmpty(productId))
+                success = await _cartService.DeleteItemAsync(userId, productId);
+            else
+                success = await _cartService.EmptyCartAsync(userId);
+
+            if (success)
                 return Ok();
-            }
-            catch (Exception ex)
-            {
-                return NotFound(ex.Message);
-            }
+            
+            return StatusCode(StatusCodes.Status500InternalServerError, "Internal server error");
         }
 
         [Authorize]
@@ -76,21 +62,11 @@ namespace _8bitstore_be.Controllers
         {
 
             var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value ?? null;
+            if (string.IsNullOrEmpty(userId))
+                return Unauthorized();
 
-            if (userId == null)
-            {
-                return BadRequest("User ID is missing");
-            }
-
-            try
-            {
-                CartDto cart = await _cartService.GetCartAsync(userId);
-                return Ok(cart);
-            }
-            catch (KeyNotFoundException ex)
-            {
-                return NotFound(ex.Message);
-            }
+            CartDto cart = await _cartService.GetCartAsync(userId);
+            return Ok(cart);
         }
     }
 }

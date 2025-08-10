@@ -22,46 +22,25 @@ namespace _8bitstore_be.Controllers
         [HttpGet]
         public async Task<IActionResult> GetReviews([FromQuery] string productId)
         {
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(ModelState);
-            }
 
-            try
-            {
-                var reviews = await _reviewService.GetReviewAsync(productId);
-                return Ok(reviews);
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(500, ex.Message);
-            }
+            var reviews = await _reviewService.GetReviewAsync(productId);
+            return Ok(reviews);
         }
         
         [Authorize]
         [HttpPost("add")]
-        public async Task<IActionResult> AddReview([FromBody] ReviewDto request)
+        public async Task<IActionResult> AddReview(ReviewDto request)
         {
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(ModelState);
-            }
-
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier) ?? null;
-            if (userId == null)
-            {
-                return BadRequest("Cannot find the user");
-            }
+            if (string.IsNullOrEmpty(userId))
+                return Unauthorized();
 
-            try
-            {
-                await _reviewService.AddReviewAsync(userId, request);
-                return Ok("Add review successfully");
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(500, ex.Message);
-            }
+            bool success = await _reviewService.AddReviewAsync(userId, request);
+            
+            if (success)
+                return Ok();
+            
+            return StatusCode(StatusCodes.Status500InternalServerError, new { message = "Failed to add review" });
         }
     }
 }

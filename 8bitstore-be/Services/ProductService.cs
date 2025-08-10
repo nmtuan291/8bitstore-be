@@ -121,28 +121,39 @@ namespace _8bitstore_be.Services
             };
         }
 
-        public async Task AddProductAsync(ProductDto product)
+        public async Task<bool> AddProductAsync(ProductDto product)
         {
-            Product newProduct = new Product()
+            try
             {
-                ProductID = product.ProductId,
-                ProductName = product.ProductName,
-                Price = product.Price,
-                Platform = product.Platform,
-                Type = product.Type,
-                Genre = product.Genre,
-                Manufacturer = product.Manufacturer,
-                Description = product.Description,
-                ImportDate = DateTime.UtcNow,
-                ImgUrl = product.ImgUrl,
-                StockNum = product.StockNum,
-                WeeklySales = 0
-            };
-            var db = _redis.GetDatabase();
-            await db.SortedSetAddAsync("products", newProduct.ProductName, 0);
-            
-            await _productRepository.AddAsync(newProduct);
-            await _productRepository.SaveChangesAsync();
+                if (product == null || string.IsNullOrEmpty(product.ProductName) || product.Price < 0)
+                    return false;
+
+                Product newProduct = new Product()
+                {
+                    ProductID = product.ProductId,
+                    ProductName = product.ProductName,
+                    Price = product.Price,
+                    Platform = product.Platform,
+                    Type = product.Type,
+                    Genre = product.Genre,
+                    Manufacturer = product.Manufacturer,
+                    Description = product.Description,
+                    ImportDate = DateTime.UtcNow,
+                    ImgUrl = product.ImgUrl,
+                    StockNum = product.StockNum,
+                    WeeklySales = 0
+                };
+                var db = _redis.GetDatabase();
+                await db.SortedSetAddAsync("products", newProduct.ProductName, 0);
+                
+                await _productRepository.AddAsync(newProduct);
+                await _productRepository.SaveChangesAsync();
+                return true;
+            }
+            catch
+            {
+                return false;
+            }
         }
 
         public async Task<IEnumerable<string>> GetSuggestionAsync(string query)

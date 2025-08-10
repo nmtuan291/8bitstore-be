@@ -31,34 +31,26 @@ namespace _8bitstore_be.Controllers
         }
 
         [HttpPost("signup")]
-        public async Task<IActionResult> SignUp([FromBody] UserForRegistrationDto user)
+        public async Task<IActionResult> SignUp(UserForRegistrationDto user)
         {
             AuthResponseDto response = await _registrationService.SignupAsync(user);
 
             if (!response.isSuccess)
-            {
                 return BadRequest(response.Errors);
-            }
 
             return Ok();
         }
  
         [HttpPost("login")]
-        public async Task<IActionResult> Login([FromBody] UserLoginDto user)
+        public async Task<IActionResult> Login(UserLoginDto user)
         {
             AuthResponseDto response = await _loginService.LoginAsync(user);
 
             if (response.User == null)
-            {
                 return Unauthorized();
-            }
-
 
             if (!response.isSuccess)
-            {
                 return BadRequest(response.Errors);
-            }
-
 
             return Ok();
         }
@@ -68,33 +60,26 @@ namespace _8bitstore_be.Controllers
         public async Task<IActionResult> GetUser()
         {
             var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value ?? null;
-            if (userId == null)
-            {
-                return BadRequest(new { error = "Missing username"});
-            }
+            if (string.IsNullOrEmpty(userId))
+                return Unauthorized();
             
             var user = await _loginService.GetUserAsync(userId);
             if (user == null)
-            {
                 return NotFound();
-            }
 
             return Ok(user);
         }
         
         [Authorize]
         [HttpPut("address/update")]
-        public async Task<IActionResult> UpdateAddress([FromBody] AddressDto address)
+        public async Task<IActionResult> UpdateAddress(AddressDto address)
         {
-            try
-            {
-                await _userService.ChangeAddressAsync(address);
-                return Ok();
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(500, ex.Message);
-            }
+            bool success = await _userService.ChangeAddressAsync(address);
+            
+            if (success)
+                return Ok(new { message = "Address updated successfully" });
+            
+            return StatusCode(StatusCodes.Status500InternalServerError, new { message = "Failed to update address" });
         }
 
         [Authorize]
@@ -105,8 +90,12 @@ namespace _8bitstore_be.Controllers
             if (string.IsNullOrEmpty(userId))
                 return Unauthorized();
             
-            await _userService.AddAddressAsync(address, userId);
-            return Ok();
+            bool success = await _userService.AddAddressAsync(address, userId);
+            
+            if (success)
+                return Ok(new { message = "Address added successfully" });
+            
+            return StatusCode(StatusCodes.Status500InternalServerError, new { message = "Failed to add address" });
         }
 
         [Authorize]
@@ -116,6 +105,7 @@ namespace _8bitstore_be.Controllers
             var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value ?? null;
             if (string.IsNullOrEmpty(userId))
                 return Unauthorized();
+            
             var addresses = await _userService.GetAddressesByUserIdAsync(userId);
             return Ok(addresses);
         }
@@ -124,8 +114,12 @@ namespace _8bitstore_be.Controllers
         [HttpDelete("address/delete/{addressId}")]
         public async Task<IActionResult> DeleteAddress(Guid addressId)
         {
-            await _userService.DeleteAddressAsync(addressId);
-            return Ok();
+            bool success = await _userService.DeleteAddressAsync(addressId);
+            
+            if (success)
+                return Ok(new { message = "Address deleted successfully" });
+            
+            return StatusCode(StatusCodes.Status500InternalServerError,new { message = "Failed to delete address" });
         }
 
         [Authorize]
@@ -144,19 +138,8 @@ namespace _8bitstore_be.Controllers
         [HttpPost("logout")]
         public async Task<IActionResult> Logout()
         {
-            try
-            {
-                await _loginService.LogoutAsync();
-                return Ok(new StatusResponse<string>
-                {
-                    Status = "SUCCESS",
-                    Message = "Logout successfully"
-                });
-            }
-            catch(Exception ex)
-            {
-                return StatusCode(500, ex.Message);
-            }
+            await _loginService.LogoutAsync();
+            return Ok();
         }
     }
 }

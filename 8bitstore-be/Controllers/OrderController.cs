@@ -22,24 +22,19 @@ namespace _8bitstore_be.Controllers
         
         [Authorize]
         [HttpPost("add")]
-        public async Task<IActionResult> CreateOrder([FromBody] OrderDto order)
+        public async Task<IActionResult> CreateOrder(OrderDto order)
         {
             var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value ?? null;
-
-            if (userId == null)
+            if (string.IsNullOrEmpty(userId))
             {
-                return BadRequest("User does not exists");
+                return Unauthorized();
             } 
 
-            try
-            {
-                await _orderService.CreateOrderAsync(order, userId);
-                return Ok("Create order successfully");
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(500, ex.Message);
-            }
+            bool success = await _orderService.CreateOrderAsync(order, userId);
+            if (success)
+                return Ok(new { message = "Order created successfully" });
+            
+            return StatusCode(StatusCodes.Status500InternalServerError, new { error = "Order creation failed" });
         }
 
         [Authorize]
@@ -47,25 +42,15 @@ namespace _8bitstore_be.Controllers
         public async Task<IActionResult> GetOrders()
         {
             var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value ?? null;
-            
-            if (userId == null)
-            {
-                return BadRequest("User does not exits");
-            }
+            if (string.IsNullOrEmpty(userId))
+                return Unauthorized();
 
-            try
+            ICollection<OrderDto> orders = await _orderService.GetOrderAsync(userId);
+            return Ok(new StatusResponse<ICollection<OrderDto>>
             {
-                ICollection<OrderDto> orders = await _orderService.GetOrderAsync(userId);
-                return Ok(new StatusResponse<ICollection<OrderDto>>
-                {
-                    Status = "SUCCESS",
-                    Message = orders
-                });
-            }
-            catch(Exception ex)
-            {
-                return StatusCode(500, ex.Message);
-            }
+                Status = "SUCCESS",
+                Message = orders
+            });
          }
 
         [HttpGet("get-all")]
@@ -83,21 +68,15 @@ namespace _8bitstore_be.Controllers
         [HttpPatch("change-status/{orderId}")]
         public async Task<IActionResult> ChangeStatus(string orderId, [FromBody] string status)
         {
-            try
-            {
-                OrderDto order = new()
-                {
-                    OrderId = orderId,
-                    Status = status
-                };
 
-                await _orderService.ChangeOrderStatusAsync(order);
-                return Ok("Order's status changed successfully");
-            }
-            catch (Exception ex)
+            OrderDto order = new()
             {
-                return StatusCode(500, ex.Message);
+                OrderId = orderId,
+                Status = status
             };
+
+            await _orderService.ChangeOrderStatusAsync(order);
+            return Ok();
         }
     }
 }

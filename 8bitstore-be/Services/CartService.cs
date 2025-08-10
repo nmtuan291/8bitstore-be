@@ -20,52 +20,85 @@ namespace _8bitstore_be.Services
             _productRepository = productRepository;
         }
 
-        public async Task AddItemAsync(string userId, string productId, int quantity)
+        public async Task<bool> AddItemAsync(string userId, string productId, int quantity)
         {
-            var cart = await _cartRepository.GetCartByUserIdAsync(userId);
-            if (cart == null)
+            try
             {
-                cart = new Cart
+                if (string.IsNullOrEmpty(userId) || string.IsNullOrEmpty(productId) || quantity <= 0)
+                    return false;
+
+                var cart = await _cartRepository.GetCartByUserIdAsync(userId);
+                if (cart == null)
                 {
-                    UserId = userId,
-                    Id = Guid.NewGuid().ToString(),
-                    CartItems = new List<CartItem>()
-                };
-                await _cartRepository.AddAsync(cart);
-            }
-            var cartItem = cart.CartItems.FirstOrDefault(item => item.ProductId == productId);
-            if (cartItem == null)
-            {
-                cart.CartItems.Add(new CartItem
+                    cart = new Cart
+                    {
+                        UserId = userId,
+                        Id = Guid.NewGuid().ToString(),
+                        CartItems = new List<CartItem>()
+                    };
+                    await _cartRepository.AddAsync(cart);
+                }
+                var cartItem = cart.CartItems.FirstOrDefault(item => item.ProductId == productId);
+                if (cartItem == null)
                 {
-                    Id = Guid.NewGuid().ToString(),
-                    ProductId = productId,
-                    CartId = cart.Id,
-                    Quantity = quantity
-                });
+                    cart.CartItems.Add(new CartItem
+                    {
+                        Id = Guid.NewGuid().ToString(),
+                        ProductId = productId,
+                        CartId = cart.Id,
+                        Quantity = quantity
+                    });
+                }
+                else
+                {
+                    cartItem.Quantity = quantity;
+                }
+                await _cartRepository.SaveChangesAsync();
+                return true;
             }
-            else
+            catch
             {
-                cartItem.Quantity = quantity;
+                return false;
             }
-            await _cartRepository.SaveChangesAsync();
         }
 
-        public async Task DeleteItemAsync(string userId, string productId)
+        public async Task<bool> DeleteItemAsync(string userId, string productId)
         {
-            var cart = await _cartRepository.GetCartByUserIdAsync(userId);
-            if (cart == null)
-                throw new KeyNotFoundException($"Cart was not found");
-            var itemToRemove = cart.CartItems.FirstOrDefault(ci => ci.ProductId == productId);
-            if (itemToRemove == null)
-                throw new KeyNotFoundException("Item not found in the cart");
-            cart.CartItems.Remove(itemToRemove);
-            await _cartRepository.SaveChangesAsync();
+            try
+            {
+                if (string.IsNullOrEmpty(userId) || string.IsNullOrEmpty(productId))
+                    return false;
+
+                var cart = await _cartRepository.GetCartByUserIdAsync(userId);
+                if (cart == null)
+                    return false;
+                var itemToRemove = cart.CartItems.FirstOrDefault(ci => ci.ProductId == productId);
+                if (itemToRemove == null)
+                    return false;
+                cart.CartItems.Remove(itemToRemove);
+                await _cartRepository.SaveChangesAsync();
+                return true;
+            }
+            catch
+            {
+                return false;
+            }
         }
 
-        public async Task EmptyCartAsync(string userId)
+        public async Task<bool> EmptyCartAsync(string userId)
         {
-           await _cartRepository.EmptyCartAsync(userId);
+            try
+            {
+                if (string.IsNullOrEmpty(userId))
+                    return false;
+
+                await _cartRepository.EmptyCartAsync(userId);
+                return true;
+            }
+            catch
+            {
+                return false;
+            }
         }
 
         public async Task<CartDto> GetCartAsync(string userId)

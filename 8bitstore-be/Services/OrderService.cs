@@ -23,49 +23,59 @@ namespace _8bitstore_be.Services
             _userManager = userManager;
         }
 
-        public async Task CreateOrderAsync(OrderDto order, string userId)
+        public async Task<bool> CreateOrderAsync(OrderDto order, string userId)
         {
-            string orderId = order.OrderId;
-            Order newOrder = new()
+            try
             {
-                Id = orderId,
-                UserId = userId,
-                OrderDate = DateTime.UtcNow,
-                DeliveryDate = null,
-                Status = order.Status,
-                Total = order.Total ?? 0,
-                OrderProducts = (order.Items ?? new List<OrderItemDto>()).Select(item => new OrderProduct
+                if (order == null || string.IsNullOrEmpty(userId) || string.IsNullOrEmpty(order.OrderId))
+                    return false;
+
+                string orderId = order.OrderId;
+                Order newOrder = new()
                 {
-                    Id = Guid.NewGuid().ToString(),
-                    ProductId = item.ProductId,
-                    Quantity = item.Quantity,
-                    OrderId = orderId,
-                    UnitPrice = item.Price
-                }).ToList()
-            };
-            
-            await _orderRepository.AddAsync(newOrder);
-            await _orderRepository.SaveChangesAsync();
-            
-            // Send email after creating order
-            string subject = $"Xác nhận đơn hàng {orderId}";
-            var user = await _userManager.FindByIdAsync(userId);
-            if (user == null)
-                return;
-            string userEmail = user.Email ?? "";
-            
-            string emailBody = $@"
-                <h2>Xác nhận đã đặt đơn hàng {orderId}</h2>
-                <p>Cảm ơn vì đã đặt hàng, {user.FullName}!</p>
-                <p><strong>Ngày đặt:</strong> {newOrder.OrderDate}</p>
-                <p><strong>Trạng thái:</strong> {newOrder.Status}</p>
-                <h3>Danh sách hàng:</h3>
-                <ul>
-                    {string.Join("", newOrder.OrderProducts.Select(item => $"<li>{item.Product?.ProductName ?? item.ProductId} - {item.Quantity} x {item.UnitPrice:C}</li>"))}
-                </ul>
-                <p><strong>Tổng cộng:</strong> {newOrder.Total:C}</p>
-            ";
-            await _emailService.SendEmailAsync(userEmail, emailBody, subject);
+                    Id = orderId,
+                    UserId = userId,
+                    OrderDate = DateTime.UtcNow,
+                    DeliveryDate = null,
+                    Status = order.Status,
+                    Total = order.Total ?? 0,
+                    OrderProducts = (order.Items ?? new List<OrderItemDto>()).Select(item => new OrderProduct
+                    {
+                        Id = Guid.NewGuid().ToString(),
+                        ProductId = item.ProductId,
+                        Quantity = item.Quantity,
+                        OrderId = orderId,
+                        UnitPrice = item.Price
+                    }).ToList()
+                };
+                
+                await _orderRepository.AddAsync(newOrder);
+                await _orderRepository.SaveChangesAsync();
+                
+                string subject = $"Xác nhận đơn hàng {orderId}";
+                var user = await _userManager.FindByIdAsync(userId);
+                if (user == null)
+                    return true;
+                string userEmail = user.Email ?? "";
+                
+                string emailBody = $@"
+                    <h2>Xác nhận đã đặt đơn hàng {orderId}</h2>
+                    <p>Cảm ơn vì đã đặt hàng, {user.FullName}!</p>
+                    <p><strong>Ngày đặt:</strong> {newOrder.OrderDate}</p>
+                    <p><strong>Trạng thái:</strong> {newOrder.Status}</p>
+                    <h3>Danh sách hàng:</h3>
+                    <ul>
+                        {string.Join("", newOrder.OrderProducts.Select(item => $"<li>{item.Product?.ProductName ?? item.ProductId} - {item.Quantity} x {item.UnitPrice:C}</li>"))}
+                    </ul>
+                    <p><strong>Tổng cộng:</strong> {newOrder.Total:C}</p>
+                ";
+                await _emailService.SendEmailAsync(userEmail, emailBody, subject);
+                return true;
+            }
+            catch
+            {
+                return false;
+            }
         }
 
         public async Task<ICollection<OrderDto>> GetOrderAsync(string userId)
@@ -112,14 +122,25 @@ namespace _8bitstore_be.Services
             }).OrderBy(x => x.OrderDate).ToList();
         }
         
-        public async Task ChangeOrderStatusAsync(OrderDto request)
+        public async Task<bool> ChangeOrderStatusAsync(OrderDto request)
         {
-            var orders = await _orderRepository.FindAsync(o => o.Id == request.OrderId);
-            var order = orders.FirstOrDefault();
-            if (order != null && order.Status != request.Status)
+            try
             {
-                order.Status = request.Status;
-                await _orderRepository.SaveChangesAsync();
+                if (request == null || string.IsNullOrEmpty(request.OrderId))
+                    return false;
+
+                var orders = await _orderRepository.FindAsync(o => o.Id == request.OrderId);
+                var order = orders.FirstOrDefault();
+                if (order != null && order.Status != request.Status)
+                {
+                    order.Status = request.Status;
+                    await _orderRepository.SaveChangesAsync();
+                }
+                return true;
+            }
+            catch
+            {
+                return false;
             }
         }
     }
