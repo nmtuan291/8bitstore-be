@@ -21,14 +21,38 @@ namespace _8bitstore_be.Services
             _userManager = userManager;
         }
 
-        public async Task<bool> ChangeAddressAsync(AddressDto addressDto)
+        public async Task<bool> ChangeAddressAsync(AddressDto addressDto, string userId)
         {
             try
             {
-                if (addressDto == null || addressDto.Id == Guid.Empty)
+                if (addressDto.Id == Guid.Empty)
                     return false;
 
+                if (addressDto.IsDefault)
+                {
+                    var addresses = await GetAddressesByUserIdAsync(userId);
+                    foreach (var address in addresses)
+                    {
+                        if (address.Id != addressDto.Id)
+                        {
+                            var newAddress = new AddressDto
+                            {
+                                Id = address.Id,
+                                IsDefault = false,
+                                Recipent = address.Recipent,
+                                City = address.City,
+                                District = address.District,
+                                Ward = address.Ward,
+                                RecipentPhone = address.RecipentPhone,
+                                AddressDetail = address.AddressDetail,
+                            };
+                            await _userRepository.UpdateAddressAsync(newAddress);
+                        }
+                    }
+                }
+                
                 await _userRepository.UpdateAddressAsync(addressDto);
+                await _userRepository.SaveChangesAsync();
                 return true;
             }
             catch
@@ -50,10 +74,11 @@ namespace _8bitstore_be.Services
         {
             try
             {
-                if (addressDto == null || string.IsNullOrEmpty(userId))
+                if (string.IsNullOrEmpty(userId))
                     return false;
 
                 await _userRepository.InsertAddressAsync(addressDto, userId);
+                await _userRepository.SaveChangesAsync();
                 return true;
             }
             catch
@@ -76,6 +101,7 @@ namespace _8bitstore_be.Services
             if (user == null)
                 throw new KeyNotFoundException("User does not exists");
             string code = await _userManager.GeneratePasswordResetTokenAsync(user);
+            // TO DO
         }
 
         public async Task<IEnumerable<AddressDto>> GetAddressesByUserIdAsync(string userId)
@@ -102,6 +128,7 @@ namespace _8bitstore_be.Services
                     return false;
 
                 await _userRepository.DeleteAddressById(id);
+                await _userRepository.SaveChangesAsync();
                 return true;
             }
             catch

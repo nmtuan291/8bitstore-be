@@ -74,7 +74,11 @@ namespace _8bitstore_be.Controllers
         [HttpPut("address/update")]
         public async Task<IActionResult> UpdateAddress(AddressDto address)
         {
-            bool success = await _userService.ChangeAddressAsync(address);
+            var userId =  User.FindFirst(ClaimTypes.NameIdentifier)?.Value ?? null;
+            if (string.IsNullOrEmpty(userId))
+                return Unauthorized();
+            
+            bool success = await _userService.ChangeAddressAsync(address, userId);
             
             if (success)
                 return Ok(new { message = "Address updated successfully" });

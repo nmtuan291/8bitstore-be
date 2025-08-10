@@ -27,7 +27,7 @@ namespace _8bitstore_be.Services
         {
             try
             {
-                if (order == null || string.IsNullOrEmpty(userId) || string.IsNullOrEmpty(order.OrderId))
+                if (string.IsNullOrEmpty(userId) || string.IsNullOrEmpty(order.OrderId))
                     return false;
 
                 string orderId = order.OrderId;

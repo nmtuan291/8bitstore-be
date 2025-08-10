@@ -5,7 +5,7 @@ namespace _8bitstore_be.Interfaces.Services
 {
     public interface IUserService
     {
-        Task<bool> ChangeAddressAsync(AddressDto addressDto);
+        Task<bool> ChangeAddressAsync(AddressDto addressDto, string userId);
         Task ChangePasswordAsync(string userId, string newPassword, string currentPassword);
         Task ForgotPasswordAsync(string userId);
         Task<bool> AddAddressAsync(AddressDto addressDto, string userId);
