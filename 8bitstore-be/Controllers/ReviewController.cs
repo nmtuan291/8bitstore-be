@@ -20,7 +20,7 @@ namespace _8bitstore_be.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetReviews([FromQuery] string productId)
+        public async Task<IActionResult> GetReviews(string productId)
         {
 
             var reviews = await _reviewService.GetReviewAsync(productId);

@@ -20,7 +20,7 @@ namespace _8bitstore_be.Controllers
         }
 
         [HttpGet("get-products")]
-        public async Task<IActionResult> GetProducts(ProductRequest request)
+        public async Task<IActionResult> GetProducts([FromQuery] ProductRequest request)
         {
             var products = await _productService.GetProductsAsync(request);
             return Ok(products);          
@@ -34,7 +34,7 @@ namespace _8bitstore_be.Controllers
         }
 
         [HttpGet("get-product")]
-        public async Task<IActionResult> GetProduct(ProductRequest request)
+        public async Task<IActionResult> GetProduct([FromQuery] ProductRequest request)
         {
             if (request.ProductId == null)
                 return BadRequest(new { error = "Product Id is missing." });
