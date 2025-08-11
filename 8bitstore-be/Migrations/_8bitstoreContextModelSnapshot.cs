@@ -244,6 +244,9 @@ namespace _8bitstore_be.Migrations
                     b.Property<string>("Id")
                         .HasColumnType("text");
 
+                    b.Property<Guid>("AddressId")
+                        .HasColumnType("uuid");
+
                     b.Property<DateTime?>("DeliveryDate")
                         .HasColumnType("timestamp with time zone");
 
@@ -262,6 +265,8 @@ namespace _8bitstore_be.Migrations
                         .HasColumnType("text");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("AddressId");
 
                     b.HasIndex("UserId");
 
@@ -657,11 +662,19 @@ namespace _8bitstore_be.Migrations
 
             modelBuilder.Entity("_8bitstore_be.Models.Order", b =>
                 {
+                    b.HasOne("_8bitstore_be.Models.Address", "Address")
+                        .WithMany()
+                        .HasForeignKey("AddressId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.HasOne("_8bitstore_be.Models.User", "User")
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.Navigation("Address");
 
                     b.Navigation("User");
                 });
