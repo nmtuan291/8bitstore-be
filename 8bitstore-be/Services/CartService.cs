@@ -116,7 +116,7 @@ namespace _8bitstore_be.Services
                     Quantity = item.Quantity,
                     ProductName = item.Product?.ProductName,
                     Price = item.Product?.Price ?? 0,
-                    ImgUrl = item.Product?.ImgUrl
+                    ImgUrl = item.Product?.ImgUrl?.ToList()
                 }).ToList(),
             };
         }

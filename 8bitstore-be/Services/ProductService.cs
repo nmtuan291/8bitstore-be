@@ -56,25 +56,27 @@ namespace _8bitstore_be.Services
             int totalCount = filtered.Count();
             int totalPages = (int)Math.Ceiling((double)totalCount / pageSize);
             
+            var pagedProducts = filtered
+                .Skip((request.Page - 1) * pageSize)
+                .Take(pageSize)
+                .ToList();
+            
             var result = new PaginatedResult()
             {
-                Products = filtered
-                    .Skip((request.Page - 1) * pageSize)
-                    .Take(pageSize)
-                    .Select(p => new ProductDto
-                    {
-                        ProductId = p.ProductID,
-                        ProductName = p.ProductName,
-                        Price = p.Price,
-                        Platform = p.Platform,
-                        Type = p.Type,
-                        Genre = p.Genre,
-                        Description = p.Description,
-                        ImportDate = p.ImportDate,
-                        ImgUrl = p.ImgUrl,
-                        Manufacturer = p.Manufacturer,
-                        StockNum = p.StockNum
-                    }).ToList(),
+                Products = pagedProducts.Select(p => new ProductDto
+                {
+                    ProductId = p.ProductID,
+                    ProductName = p.ProductName,
+                    Price = p.Price,
+                    Platform = p.Platform?.ToList(),
+                    Type = p.Type,
+                    Genre = p.Genre?.ToList(),
+                    Description = p.Description,
+                    ImportDate = p.ImportDate,
+                    ImgUrl = p.ImgUrl?.ToList(),
+                    Manufacturer = p.Manufacturer,
+                    StockNum = p.StockNum
+                }).ToList(),
                 PageSize = pageSize,
                 CurrentPage = request.Page,
                 TotalPages = totalPages
@@ -83,7 +85,7 @@ namespace _8bitstore_be.Services
             return result;
         }
         
-        public async Task<IEnumerable<ProductDto>> GetAllProductAsync()
+        public async Task<List<ProductDto>> GetAllProductAsync()
         {
             var products = await _productRepository.GetAllAsync();
             return products.Select(p => new ProductDto()
@@ -92,30 +94,30 @@ namespace _8bitstore_be.Services
                 ProductName = p.ProductName,
                 Description = p.Description,
                 Price = p.Price,
-                ImgUrl = p.ImgUrl,
+                ImgUrl = p.ImgUrl?.ToList(),
                 ImportDate = p.ImportDate,
-                Genre = p.Genre,
+                Genre = p.Genre?.ToList(),
                 Manufacturer = p.Manufacturer,
                 StockNum = p.StockNum
-            });
+            }).ToList();
         }
     
         public async Task<ProductDto> GetProductAsync(string productId)
         {
             var product = await _productRepository.GetByIdAsync(productId);
             if (product == null)
-                throw new KeyNotFoundException("The product cannot be found");
+                throw new KeyNotFoundException("The product cannot be found"); 
             return new ProductDto
             {
                 ProductId = product.ProductID,
                 ProductName = product.ProductName,
                 Price = product.Price,
-                Platform = product.Platform,
+                Platform = product.Platform?.ToList(),
                 Type = product.Type,
-                Genre = product.Genre,
+                Genre = product.Genre?.ToList(),
                 Description = product.Description,
                 ImportDate = product.ImportDate,
-                ImgUrl = product.ImgUrl,
+                ImgUrl = product.ImgUrl?.ToList(),
                 Manufacturer = product.Manufacturer,
                 StockNum = product.StockNum
             };
@@ -125,7 +127,7 @@ namespace _8bitstore_be.Services
         {
             try
             {
-                if (product == null || string.IsNullOrEmpty(product.ProductName) || product.Price < 0)
+                if (string.IsNullOrEmpty(product.ProductName) || product.Price < 0)
                     return false;
 
                 Product newProduct = new Product()
@@ -156,12 +158,12 @@ namespace _8bitstore_be.Services
             }
         }
 
-        public async Task<IEnumerable<string>> GetSuggestionAsync(string query)
+        public async Task<List<string>> GetSuggestionAsync(string query)
         {
             var db = _redis.GetDatabase();
             query = query.ToLower();
             var productName = await db.SortedSetRangeByValueAsync("products", query, query + char.MaxValue);
-            return productName.Select(p => p.ToString());
+            return productName.Select(p => p.ToString()).ToList();
         }
     }
 }

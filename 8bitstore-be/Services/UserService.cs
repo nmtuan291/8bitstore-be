@@ -61,13 +61,13 @@ namespace _8bitstore_be.Services
             }
         }
 
-        public async Task<IEnumerable<string>> GetUserRoleAsync(string userId)
+        public async Task<List<string>> GetUserRoleAsync(string userId)
         {
             var user  = await _userManager.FindByIdAsync(userId);
             if (user == null)
                 return new List<string>();
             
-            return await _userManager.GetRolesAsync(user);
+            return (await _userManager.GetRolesAsync(user)).ToList();
         }
 
         public async Task<bool> AddAddressAsync(AddressDto addressDto, string userId)
@@ -104,7 +104,7 @@ namespace _8bitstore_be.Services
             // TO DO
         }
 
-        public async Task<IEnumerable<AddressDto>> GetAddressesByUserIdAsync(string userId)
+        public async Task<List<AddressDto>> GetAddressesByUserIdAsync(string userId)
         {
             var addresses = await _userRepository.GetAddressesByUserIdAsync(userId);
             return addresses.Select(a => new AddressDto
@@ -117,7 +117,7 @@ namespace _8bitstore_be.Services
                 IsDefault = a.IsDefault,
                 Recipent = a.Recipent,
                 RecipentPhone = a.RecipentPhone
-            });
+            }).ToList();
         }
 
         public async Task<bool> DeleteAddressAsync(Guid id)

@@ -11,7 +11,7 @@ namespace _8bitstore_be.Data
     {
         public ReviewRepository(_8bitstoreContext context) : base(context) { }
 
-        public async Task<IEnumerable<Review>> GetReviewsByProductIdAsync(string productId)
+        public async Task<List<Review>> GetReviewsByProductIdAsync(string productId)
         {
             return await _context.Reviews
                 .Where(r => r.ProductId == productId)

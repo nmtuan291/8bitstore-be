@@ -11,7 +11,7 @@ namespace _8bitstore_be.Data
     {
         public OrderRepository(_8bitstoreContext context) : base(context) { }
 
-        public async Task<IEnumerable<Order>> GetOrdersByUserIdAsync(string userId)
+        public async Task<List<Order>> GetOrdersByUserIdAsync(string userId)
         {
             return await _context.Orders
                 .Where(o => o.UserId == userId)
@@ -21,7 +21,7 @@ namespace _8bitstore_be.Data
                 .ToListAsync();
         }
         
-        public override async Task<IEnumerable<Order>> GetAllAsync()
+        public override async Task<List<Order>> GetAllAsync()
         {
             return await _context.Orders
                 .Include(o => o.OrderProducts)

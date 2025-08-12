@@ -9,6 +9,6 @@ public interface IUserRepository: IRepository<User>
     Task<User?> GetByUsernameAsync(string username);
     Task UpdateAddressAsync(AddressDto addressDto);
     Task InsertAddressAsync(AddressDto addressDto, string userId);
-    Task<IEnumerable<Address>> GetAddressesByUserIdAsync(string userId);
+    Task<List<Address>> GetAddressesByUserIdAsync(string userId);
     Task DeleteAddressById(Guid id);
 }

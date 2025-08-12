@@ -45,8 +45,8 @@ namespace _8bitstore_be.Controllers
             if (string.IsNullOrEmpty(userId))
                 return Unauthorized();
 
-            ICollection<OrderDto> orders = await _orderService.GetOrderAsync(userId);
-            return Ok(new StatusResponse<ICollection<OrderDto>>
+            List<OrderDto> orders = await _orderService.GetOrderAsync(userId);
+            return Ok(new StatusResponse<List<OrderDto>>
             {
                 Status = "SUCCESS",
                 Message = orders
@@ -56,8 +56,8 @@ namespace _8bitstore_be.Controllers
         [HttpGet("get-all")]
         public async Task<IActionResult> GetAllOrders()
         {
-            ICollection<OrderDto> orders = await _orderService.GetOrdersAsync();
-            return Ok(new StatusResponse<ICollection<OrderDto>>
+            List<OrderDto> orders = await _orderService.GetOrdersAsync();
+            return Ok(new StatusResponse<List<OrderDto>>
             {
                 Status = "SUCCESS",
                 Message = orders

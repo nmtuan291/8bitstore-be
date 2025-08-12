@@ -29,10 +29,10 @@ namespace _8bitstore_be.Services
             {
                 wishlistItems = wishlist.Products.Select(item => new WishlistItemDto
                 {
-                    ImgUrl = item.Product?.ImgUrl,
+                    ImgUrl = item.Product?.ImgUrl?.ToList(),
                     ProductId = item.Product?.ProductID,
                     ProductName = item.Product?.ProductName,
-                    price = item.Product?.Price ?? 0,
+                    Price = item.Product?.Price ?? 0,
                 }).ToList()
             };
         }

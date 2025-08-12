@@ -1,1 +1,11 @@
-{"Version":1,"Hash":"fJHDjfzc3uEJF4cWy2UcTi5WIm4Wiy3KAUuF0UXmfL8=","Source":"8bitstore-be","BasePath":"_content/8bitstore-be","Mode":"Default","ManifestType":"Build","ReferencedProjectsConfiguration":[],"DiscoveryPatterns":[],"Assets":[],"Endpoints":[]}
+{
+  "Version": 1,
+  "Hash": "WDNPc0DkBn7vbEMFsi9L0uh3Xuxby045I2Vqvt4rMdA=",
+  "Source": "8bitstore-be",
+  "BasePath": "_content/8bitstore-be",
+  "Mode": "Default",
+  "ManifestType": "Build",
+  "ReferencedProjectsConfiguration": [],
+  "DiscoveryPatterns": [],
+  "Assets": []
+}

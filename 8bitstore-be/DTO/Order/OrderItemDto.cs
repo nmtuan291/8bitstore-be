@@ -4,18 +4,14 @@ namespace _8bitstore_be.DTO.Order
 {
     public class OrderItemDto
     {
-        [Required]
-        public string ProductId { get; set; }
+        public required string ProductId { get; set; }
 
         public string? ProductName { get; set; }
 
-        [Required]
-        public int Quantity { get; set; }
+        public required int Quantity { get; set; }
 
-        [Required]
-        public decimal Price { get; set; }
+        public required decimal Price { get; set; }
 
-        public ICollection<string>? ImgUrl { get; set; }
-
+        public List<string>? ImgUrl { get; set; }
     }
 }

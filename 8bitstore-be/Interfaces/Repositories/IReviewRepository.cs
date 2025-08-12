@@ -6,6 +6,6 @@ namespace _8bitstore_be.Interfaces.Repositories
 {
     public interface IReviewRepository : IRepository<Review>
     {
-        Task<IEnumerable<Review>> GetReviewsByProductIdAsync(string productId);
+        Task<List<Review>> GetReviewsByProductIdAsync(string productId);
     }
 } 

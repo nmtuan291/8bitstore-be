@@ -11,13 +11,13 @@ namespace _8bitstore_be.Data
     {
         public ProductRepository(_8bitstoreContext context) : base(context) { }
 
-        public async Task<IEnumerable<Product>> GetProductsByNameAsync(string name)
+        public async Task<List<Product>> GetProductsByNameAsync(string name)
         {
             return await _context.Products.Where(p => p.ProductName.Contains(name)).ToListAsync();
         }
 
         /*
-        public async Task<IEnumerable<Product>> GetProductsAsAdminAsync()
+        public async Task<List<Product>> GetProductsAsAdminAsync()
         {
             return await _context.Products.ToListAsync();
         }*/

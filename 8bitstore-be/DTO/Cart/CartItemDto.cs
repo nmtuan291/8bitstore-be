@@ -4,20 +4,19 @@ namespace _8bitstore_be.DTO.Cart
 {
     public class CartItemDto
     {
-
         [Required]
         public string ProductId { get; set; }
-
-        [Required]
-        public int Quantity { get; set; }
-
-        [Required]
-        public decimal Price { get; set; }
-
+        
         [Required]
         public string ProductName { get; set; }
-
+        
         [Required]
-        public ICollection<string> ImgUrl { get; set; }
+        public int Quantity { get; set; }
+        
+        [Required]
+        public decimal Price { get; set; }
+        
+        [Required]
+        public List<string> ImgUrl { get; set; }
     }
 }

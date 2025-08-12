@@ -6,7 +6,7 @@ namespace _8bitstore_be.Interfaces.Services
 {
     public interface IReviewService
     {
-        Task<ICollection<ReviewDto>> GetReviewAsync(string productId);
+        Task<List<ReviewDto>> GetReviewAsync(string productId);
         Task<bool> AddReviewAsync(string userId, ReviewDto review);
     }
 } 

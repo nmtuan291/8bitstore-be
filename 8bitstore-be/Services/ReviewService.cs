@@ -20,7 +20,7 @@ namespace _8bitstore_be.Services
             _userRepository = userRepository;
         }
 
-        public async Task<ICollection<ReviewDto>> GetReviewAsync(string productId)
+        public async Task<List<ReviewDto>> GetReviewAsync(string productId)
         {
             var reviews = await _reviewRepository.GetReviewsByProductIdAsync(productId);
             return reviews.Select(review => new ReviewDto

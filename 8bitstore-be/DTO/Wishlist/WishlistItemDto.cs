@@ -6,14 +6,13 @@ namespace _8bitstore_be.DTO.Wishlist
     {
         [Required]
         public string ProductId { get; set; }
-
+        
         [Required]
         public string ProductName { get; set; }
-
+        
         [Required]
-        public ICollection<string> ImgUrl { get; set; }
-
-        [Required]
-        public decimal price { get; set; }
+        public decimal Price { get; set; }
+        
+        public List<string> ImgUrl { get; set; }
     }
 }

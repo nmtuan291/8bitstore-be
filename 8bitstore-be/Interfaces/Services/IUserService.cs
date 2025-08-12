@@ -9,8 +9,8 @@ namespace _8bitstore_be.Interfaces.Services
         Task ChangePasswordAsync(string userId, string newPassword, string currentPassword);
         Task ForgotPasswordAsync(string userId);
         Task<bool> AddAddressAsync(AddressDto addressDto, string userId);
-        Task<IEnumerable<AddressDto>> GetAddressesByUserIdAsync(string userId);
+        Task<List<AddressDto>> GetAddressesByUserIdAsync(string userId);
         Task<bool> DeleteAddressAsync(Guid id);
-        Task<IEnumerable<string>> GetUserRoleAsync(string userId);
+        Task<List<string>> GetUserRoleAsync(string userId);
     }
 } 

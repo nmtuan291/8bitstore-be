@@ -6,6 +6,6 @@ namespace _8bitstore_be.Interfaces.Repositories
 {
     public interface IProductRepository : IRepository<Product>
     {
-        Task<IEnumerable<Product>> GetProductsByNameAsync(string name);
+        Task<List<Product>> GetProductsByNameAsync(string name);
     }
 } 

@@ -80,7 +80,7 @@ namespace _8bitstore_be.Services
             }
         }
 
-        public async Task<ICollection<OrderDto>> GetOrderAsync(string userId)
+        public async Task<List<OrderDto>> GetOrderAsync(string userId)
         {
             var orders = await _orderRepository.GetOrdersByUserIdAsync(userId);
             return orders.Select(x => new OrderDto
@@ -91,7 +91,7 @@ namespace _8bitstore_be.Services
                     Quantity = p.Quantity,
                     ProductName = p.Product?.ProductName,
                     Price = p.UnitPrice,
-                    ImgUrl = p.Product?.ImgUrl
+                    ImgUrl = p.Product?.ImgUrl?.ToList()
                 }).ToList(),
                 Total = x.Total,
                 Status = x.Status,
@@ -113,7 +113,7 @@ namespace _8bitstore_be.Services
             }).OrderBy(x => x.OrderDate).ToList();
         }
 
-        public async Task<ICollection<OrderDto>> GetOrdersAsync()
+        public async Task<List<OrderDto>> GetOrdersAsync()
         {
             var orders = await _orderRepository.GetAllAsync();
             return orders.Select(x => new OrderDto
@@ -124,7 +124,7 @@ namespace _8bitstore_be.Services
                     Quantity = p.Quantity,
                     ProductName = p.Product?.ProductName,
                     Price = p.UnitPrice,
-                    ImgUrl = p.Product?.ImgUrl
+                    ImgUrl = p.Product?.ImgUrl?.ToList()
                 }).ToList(),
                 Total = x.Total,
                 Status = x.Status,

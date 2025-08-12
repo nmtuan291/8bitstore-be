@@ -6,7 +6,7 @@ namespace _8bitstore_be.Interfaces.Repositories
 {
     public interface IOrderRepository : IRepository<Order>
     {
-        Task<IEnumerable<Order>> GetOrdersByUserIdAsync(string userId);
-        Task<IEnumerable<Order>> GetAllAsync();
+        Task<List<Order>> GetOrdersByUserIdAsync(string userId);
+        Task<List<Order>> GetAllAsync();
     }
 } 
