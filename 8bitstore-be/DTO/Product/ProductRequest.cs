@@ -4,7 +4,7 @@ namespace _8bitstore_be.DTO.Product
 {
     public class ProductRequest
     {
-        public required string ProductId { get; set; }
+        public required string? ProductId { get; set; }
         public string? ProductName { get; set; }
         public decimal? MinPrice { get; set; }
         public decimal? MaxPrice { get; set; }

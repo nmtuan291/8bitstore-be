@@ -4,7 +4,7 @@ namespace _8bitstore_be.DTO.Product
 {
     public class ProductDto
     {
-        public string ProductId { get; set; }
+        public string? ProductId { get; set; }
         public int StockNum { get; set; }
         public decimal Price { get; set; }
         public string Manufacturer { get; set; }
