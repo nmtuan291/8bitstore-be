@@ -17,7 +17,6 @@ namespace _8bitstore_be.DTO.Review
         public string? UserName { get; set; }
 
         public string? ImgUrl {  get; set; }
-
         public DateTime? ReviewDate { get; set; }
     }
 }
