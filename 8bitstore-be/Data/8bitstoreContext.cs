@@ -7,7 +7,6 @@ namespace _8bitstore_be.Data
     public class _8bitstoreContext: IdentityDbContext<User>
     {
         public _8bitstoreContext(DbContextOptions<_8bitstoreContext> options): base(options) { }
-
         public DbSet<Product> Products { get; set; }
         public DbSet<Cart> Carts { get; set; }
         public DbSet<CartItem> CartItems { get; set; }
@@ -19,5 +18,22 @@ namespace _8bitstore_be.Data
         public DbSet<WishlistItem> WishlistItems { get; set; }
         public DbSet<Payment> Payments { get; set; }
         public DbSet<Address> Addresses { get; set; }
+        
+        protected override void OnModelCreating(ModelBuilder builder)
+        {
+            builder.Entity<Cart>()
+                .HasIndex(c => c.UserId);
+            
+            builder.Entity<Order>()
+                .HasIndex(o => o.UserId);
+            
+            builder.Entity<Review>()
+                .HasIndex(r => r.ProductId);
+            
+            builder.Entity<Wishlist>()
+                .HasIndex(w => w.UserId);
+            
+            base.OnModelCreating(builder);
+        }
     }
 }
