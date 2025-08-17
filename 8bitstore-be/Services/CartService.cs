@@ -13,11 +13,13 @@ namespace _8bitstore_be.Services
     {
         private readonly ICartRepository _cartRepository;
         private readonly IProductRepository _productRepository;
+        private readonly ILogger<CartService> _logger;
 
-        public CartService(ICartRepository cartRepository, IProductRepository productRepository)
+        public CartService(ICartRepository cartRepository, IProductRepository productRepository,  ILogger<CartService> logger)
         {
             _cartRepository = cartRepository;
             _productRepository = productRepository;
+            _logger = logger;
         }
 
         public async Task<bool> AddItemAsync(string userId, string productId, int quantity)
@@ -38,9 +40,15 @@ namespace _8bitstore_be.Services
                     };
                     await _cartRepository.AddAsync(cart);
                 }
+                
                 var cartItem = cart.CartItems.FirstOrDefault(item => item.ProductId == productId);
+                
                 if (cartItem == null)
                 {
+                    var product = await _productRepository.GetByIdAsync(productId);
+                    if (product.StockNum < quantity)
+                        return false;
+                    
                     cart.CartItems.Add(new CartItem
                     {
                         Id = Guid.NewGuid().ToString(),
@@ -56,8 +64,9 @@ namespace _8bitstore_be.Services
                 await _cartRepository.SaveChangesAsync();
                 return true;
             }
-            catch
+            catch(Exception ex)
             {
+                _logger.LogError(ex, "Failed to add item to cart for user {UserId}", userId);
                 return false;
             }
         }
@@ -79,8 +88,9 @@ namespace _8bitstore_be.Services
                 await _cartRepository.SaveChangesAsync();
                 return true;
             }
-            catch
+            catch(Exception ex)
             {
+                _logger.LogError(ex, "Failed to delete item to cart for user {UserId}", userId);
                 return false;
             }
         }
@@ -95,8 +105,9 @@ namespace _8bitstore_be.Services
                 await _cartRepository.EmptyCartAsync(userId);
                 return true;
             }
-            catch
+            catch(Exception ex)
             {
+                _logger.LogError(ex, "Failed to empty cart for user {UserId}", userId);
                 return false;
             }
         }

@@ -13,11 +13,13 @@ namespace _8bitstore_be.Services
     {
         private readonly IReviewRepository _reviewRepository;
         private readonly IRepository<User> _userRepository;
+        private readonly ILogger<ReviewService> _logger;
 
-        public ReviewService(IReviewRepository reviewRepository, IRepository<User> userRepository)
+        public ReviewService(IReviewRepository reviewRepository, IRepository<User> userRepository, ILogger<ReviewService> logger)
         {
             _reviewRepository = reviewRepository;
             _userRepository = userRepository;
+            _logger = logger;
         }
 
         public async Task<List<ReviewDto>> GetReviewAsync(string productId)
@@ -37,13 +39,12 @@ namespace _8bitstore_be.Services
         {
             try
             {
-                if (string.IsNullOrEmpty(userId) || review == null || string.IsNullOrEmpty(review.ProductId))
+                if (string.IsNullOrEmpty(userId) || string.IsNullOrEmpty(review.ProductId))
+                {
+                    _logger.LogError($"Invalid parameters for {nameof(AddReviewAsync)}");
                     return false;
-
-                var user = await _userRepository.GetByIdAsync(userId);
-                if (user == null)
-                    return false;
-
+                }
+                
                 Review newReview = new Review
                 {
                     Id = Guid.NewGuid().ToString(),
@@ -57,8 +58,9 @@ namespace _8bitstore_be.Services
                 await _reviewRepository.SaveChangesAsync();
                 return true;
             }
-            catch
+            catch(Exception ex)
             {
+                _logger.LogError(ex, "Failed to add review");
                 return false;
             }
         }

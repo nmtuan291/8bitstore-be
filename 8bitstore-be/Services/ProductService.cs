@@ -16,10 +16,12 @@ namespace _8bitstore_be.Services
     {
         private readonly IProductRepository _productRepository;
         private readonly IConnectionMultiplexer _redis;
-        public ProductService(IProductRepository productRepository, IConnectionMultiplexer redis)
+        private readonly ILogger<ProductService> _logger;
+        public ProductService(IProductRepository productRepository, IConnectionMultiplexer redis, ILogger<ProductService> logger)
         {
             _productRepository = productRepository;
             _redis = redis;
+            _logger = logger;
         }
 
         public async Task<PaginatedResult> GetProductsAsync(ProductRequest request)
@@ -68,12 +70,12 @@ namespace _8bitstore_be.Services
                     ProductId = p.ProductID,
                     ProductName = p.ProductName,
                     Price = p.Price,
-                    Platform = p.Platform?.ToList(),
+                    Platform = p.Platform?.ToList() ?? new List<string>(),
                     Type = p.Type,
-                    Genre = p.Genre?.ToList(),
+                    Genre = p.Genre?.ToList() ?? new List<string>(),
                     Description = p.Description,
                     ImportDate = p.ImportDate,
-                    ImgUrl = p.ImgUrl?.ToList(),
+                    ImgUrl = p.ImgUrl?.ToList() ??  new List<string>(),
                     Manufacturer = p.Manufacturer,
                     StockNum = p.StockNum
                 }).ToList(),
@@ -94,9 +96,9 @@ namespace _8bitstore_be.Services
                 ProductName = p.ProductName,
                 Description = p.Description,
                 Price = p.Price,
-                ImgUrl = p.ImgUrl?.ToList(),
+                ImgUrl = p.ImgUrl?.ToList() ?? new List<string>(),
                 ImportDate = p.ImportDate,
-                Genre = p.Genre?.ToList(),
+                Genre = p.Genre?.ToList() ?? new List<string>(),
                 Manufacturer = p.Manufacturer,
                 StockNum = p.StockNum
             }).ToList();
@@ -112,12 +114,12 @@ namespace _8bitstore_be.Services
                 ProductId = product.ProductID,
                 ProductName = product.ProductName,
                 Price = product.Price,
-                Platform = product.Platform?.ToList(),
+                Platform = product.Platform?.ToList() ?? new List<string>(),
                 Type = product.Type,
-                Genre = product.Genre?.ToList(),
+                Genre = product.Genre?.ToList() ??  new List<string>(),
                 Description = product.Description,
                 ImportDate = product.ImportDate,
-                ImgUrl = product.ImgUrl?.ToList(),
+                ImgUrl = product.ImgUrl?.ToList() ??  new List<string>(),
                 Manufacturer = product.Manufacturer,
                 StockNum = product.StockNum
             };
@@ -132,7 +134,7 @@ namespace _8bitstore_be.Services
 
                 Product newProduct = new Product()
                 {
-                    ProductID = product.ProductId,
+                    ProductID = product.ProductId ?? "",
                     ProductName = product.ProductName,
                     Price = product.Price,
                     Platform = product.Platform,
@@ -152,8 +154,9 @@ namespace _8bitstore_be.Services
                 await _productRepository.SaveChangesAsync();
                 return true;
             }
-            catch
+            catch(Exception ex)
             {
+                _logger.LogError(ex, "An error occured while adding a product");
                 return false;
             }
         }

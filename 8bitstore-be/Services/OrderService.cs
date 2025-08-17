@@ -16,12 +16,14 @@ namespace _8bitstore_be.Services
         private readonly IOrderRepository _orderRepository;
         private readonly IEmailService _emailService;
         private readonly UserManager<User> _userManager;
-
-        public OrderService(IOrderRepository orderRepository, IEmailService emailService, UserManager<User> userManager)
+        private readonly ILogger<OrderService> _logger;
+        public OrderService(IOrderRepository orderRepository, IEmailService emailService, 
+            UserManager<User> userManager, ILogger<OrderService> logger)
         {
             _orderRepository = orderRepository;
             _emailService = emailService;
             _userManager = userManager;
+            _logger = logger;
         }
 
         public async Task<bool> CreateOrderAsync(OrderDto order, string userId)
@@ -152,20 +154,27 @@ namespace _8bitstore_be.Services
         {
             try
             {
-                if (request == null || string.IsNullOrEmpty(request.OrderId))
+                if (string.IsNullOrEmpty(request.OrderId))
                     return false;
 
                 var orders = await _orderRepository.FindAsync(o => o.Id == request.OrderId);
                 var order = orders.FirstOrDefault();
+
                 if (order != null && order.Status != request.Status)
                 {
+                    if (order.Status == "cancelled" || order.Status == "delivered")
+                    {
+                        _logger.LogWarning($"Order {request.OrderId} status cannot be changed");
+                        return false;
+                    }
                     order.Status = request.Status;
                     await _orderRepository.SaveChangesAsync();
                 }
                 return true;
             }
-            catch
+            catch(Exception ex)
             {
+                _logger.LogError(ex, ex.Message);
                 return false;
             }
         }

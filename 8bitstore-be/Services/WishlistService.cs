@@ -13,25 +13,26 @@ namespace _8bitstore_be.Services
     {
         private readonly IWishlistRepository _wishlistRepository;
         private readonly IProductRepository _productRepository;
+        private readonly ILogger<WishlistService> _logger;
 
-        public WishlistService(IWishlistRepository wishlistRepository, IProductRepository productRepository)
+        public WishlistService(IWishlistRepository wishlistRepository, IProductRepository productRepository,  ILogger<WishlistService> logger)
         {
             _wishlistRepository = wishlistRepository;
             _productRepository = productRepository;
+            _logger = logger;
         }
 
-        public async Task<WishlistDto?> GetWishlistAsync(string userId)
+        public async Task<WishlistDto> GetWishlistAsync(string userId)
         {
             var wishlist = await _wishlistRepository.GetWishlistByUserIdAsync(userId);
-            if (wishlist == null)
-                return null;
+
             return new WishlistDto
             {
                 wishlistItems = wishlist.Products.Select(item => new WishlistItemDto
                 {
-                    ImgUrl = item.Product?.ImgUrl?.ToList(),
-                    ProductId = item.Product?.ProductID,
-                    ProductName = item.Product?.ProductName,
+                    ImgUrl = item.Product?.ImgUrl?.ToList() ?? new List<string>(),
+                    ProductId = item.Product?.ProductID ?? "",
+                    ProductName = item.Product?.ProductName ?? "",
                     Price = item.Product?.Price ?? 0,
                 }).ToList()
             };
@@ -71,8 +72,9 @@ namespace _8bitstore_be.Services
                 await _wishlistRepository.SaveChangesAsync();
                 return true;
             }
-            catch
+            catch(Exception ex)
             {
+                _logger.LogError(ex, "Error while adding item");
                 return false;
             }
         }
@@ -86,7 +88,7 @@ namespace _8bitstore_be.Services
 
                 var wishlist = await _wishlistRepository.GetWishlistByUserIdAsync(userId);
                 var product = (await _productRepository.FindAsync(p => p.ProductID == productId)).FirstOrDefault();
-                if (product == null || wishlist == null)
+                if (product == null)
                     return false;
                 var wishlistItem = wishlist.Products.FirstOrDefault(p => p.ProductId == productId);
                 if (wishlistItem != null)
@@ -96,8 +98,9 @@ namespace _8bitstore_be.Services
                 await _wishlistRepository.SaveChangesAsync();
                 return true;
             }
-            catch
+            catch(Exception ex)
             {
+                _logger.LogError(ex, "Error while removing item");
                 return false;
             }
         }
