@@ -24,6 +24,9 @@ namespace _8bitstore_be.Services
 
         public async Task ChangeAddressAsync(AddressDto addressDto, string userId)
         {
+            if (await _userManager.FindByIdAsync(userId) == null)
+                throw new UserNotFoundException(userId);
+            
             if (addressDto.Id == Guid.Empty)
                 throw new AddressException("Address cannot be empty");
 
@@ -65,13 +68,16 @@ namespace _8bitstore_be.Services
 
         public async Task AddAddressAsync(AddressDto addressDto, string userId)
         {
+            if (await _userManager.FindByIdAsync(userId) == null)
+                throw new UserNotFoundException(userId);
+            
             await _userRepository.InsertAddressAsync(addressDto, userId);
             await _userRepository.SaveChangesAsync();
         }
 
         public async Task ChangePasswordAsync(string userId, string newPassword, string currentPassword)
         {
-            var user = await _userRepository.GetByIdAsync(userId);
+            var user = await _userManager.FindByIdAsync(userId);
             if (user == null)
                 throw new UserNotFoundException(userId);
             await _userManager.ChangePasswordAsync(user, currentPassword, newPassword);
@@ -88,6 +94,9 @@ namespace _8bitstore_be.Services
 
         public async Task<List<AddressDto>> GetAddressesByUserIdAsync(string userId)
         {
+            if (await _userManager.FindByIdAsync(userId) == null)
+                throw new  UserNotFoundException(userId);
+            
             var addresses = await _userRepository.GetAddressesByUserIdAsync(userId);
             return addresses.Select(a => new AddressDto
             {

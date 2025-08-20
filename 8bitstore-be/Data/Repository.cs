@@ -19,7 +19,7 @@ namespace _8bitstore_be.Data
             _dbSet = _context.Set<T>();
         }
 
-        public async Task<T> GetByIdAsync(string id)
+        public async Task<T?> GetByIdAsync(string id)
         {
             return await _dbSet.FindAsync(id);
         }

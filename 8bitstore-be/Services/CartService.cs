@@ -15,74 +15,72 @@ namespace _8bitstore_be.Services
         private readonly ICartRepository _cartRepository;
         private readonly IProductRepository _productRepository;
         private readonly ILogger<CartService> _logger;
+        private readonly IUserRepository _userRepository;
 
-        public CartService(ICartRepository cartRepository, IProductRepository productRepository,  ILogger<CartService> logger)
+        public CartService(ICartRepository cartRepository, IProductRepository productRepository,  
+            ILogger<CartService> logger,  IUserRepository userRepository)
         {
             _cartRepository = cartRepository;
             _productRepository = productRepository;
             _logger = logger;
+            _userRepository = userRepository;
         }
 
         public async Task AddItemAsync(string userId, string productId, int quantity)
         {
-            try
-            {
-                if (string.IsNullOrEmpty(userId))
-                    throw new UserNotFoundException(userId);
+            if (await _userRepository.GetByIdAsync(userId) == null)
+                throw new UserNotFoundException(userId);
                 
-                if (string.IsNullOrEmpty(productId))
+            if (await  _productRepository.GetByIdAsync(productId) == null)
+                throw new ProductNotFoundException(productId);
+                
+            if (quantity <= 0)
+                throw new ProductQuantityException(productId);
+
+            var cart = await _cartRepository.GetCartByUserIdAsync(userId);
+            if (cart == null)
+            {
+                cart = new Cart
+                {
+                    UserId = userId,
+                    Id = Guid.NewGuid().ToString(),
+                    CartItems = new List<CartItem>()
+                };
+                await _cartRepository.AddAsync(cart);
+            }
+                
+            var cartItem = cart.CartItems.FirstOrDefault(item => item.ProductId == productId);
+                
+            if (cartItem == null)
+            {
+                var product = await _productRepository.GetByIdAsync(productId);
+                if (product == null)
                     throw new ProductNotFoundException(productId);
                 
-                if (quantity <= 0)
+                if (product.StockNum < quantity)
                     throw new ProductQuantityException(productId);
-
-                var cart = await _cartRepository.GetCartByUserIdAsync(userId);
-                if (cart == null)
-                {
-                    cart = new Cart
-                    {
-                        UserId = userId,
-                        Id = Guid.NewGuid().ToString(),
-                        CartItems = new List<CartItem>()
-                    };
-                    await _cartRepository.AddAsync(cart);
-                }
-                
-                var cartItem = cart.CartItems.FirstOrDefault(item => item.ProductId == productId);
-                
-                if (cartItem == null)
-                {
-                    var product = await _productRepository.GetByIdAsync(productId);
-                    if (product.StockNum < quantity)
-                        throw new ProductQuantityException(productId);
                     
-                    cart.CartItems.Add(new CartItem
-                    {
-                        Id = Guid.NewGuid().ToString(),
-                        ProductId = productId,
-                        CartId = cart.Id,
-                        Quantity = quantity
-                    });
-                }
-                else
+                cart.CartItems.Add(new CartItem
                 {
-                    cartItem.Quantity = quantity;
-                }
-                await _cartRepository.SaveChangesAsync();
+                    Id = Guid.NewGuid().ToString(),
+                    ProductId = productId,
+                    CartId = cart.Id,
+                    Quantity = quantity
+                });
             }
-            catch(Exception ex)
+            else
             {
-                _logger.LogError(ex, "Failed to add item to cart for user {UserId}", userId);
-                throw;
+                cartItem.Quantity = quantity;
             }
+            await _cartRepository.SaveChangesAsync();
         }
 
         public async Task DeleteItemAsync(string userId, string productId)
         {
-            if (string.IsNullOrEmpty(userId))
+            if (await _userRepository.GetByIdAsync(userId) == null)
                 throw new UserNotFoundException(userId);
                 
-            if (string.IsNullOrEmpty(productId))
+            if (await _productRepository.GetByIdAsync(productId) == null)
                 throw new ProductNotFoundException(productId);
 
             var cart = await _cartRepository.GetCartByUserIdAsync(userId);
@@ -100,7 +98,7 @@ namespace _8bitstore_be.Services
 
         public async Task EmptyCartAsync(string userId)
         {
-            if (string.IsNullOrEmpty(userId))
+            if (await _userRepository.GetByIdAsync(userId) == null)
                 throw new UserNotFoundException(userId);
 
             await _cartRepository.EmptyCartAsync(userId);
@@ -120,9 +118,9 @@ namespace _8bitstore_be.Services
                 {
                     ProductId = item.ProductId,
                     Quantity = item.Quantity,
-                    ProductName = item.Product?.ProductName,
+                    ProductName = item.Product?.ProductName ?? "",
                     Price = item.Product?.Price ?? 0,
-                    ImgUrl = item.Product?.ImgUrl?.ToList()
+                    ImgUrl = item.Product?.ImgUrl?.ToList() ?? new List<string>()
                 }).ToList(),
             };
         }

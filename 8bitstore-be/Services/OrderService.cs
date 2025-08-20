@@ -18,22 +18,21 @@ namespace _8bitstore_be.Services
         private readonly IEmailService _emailService;
         private readonly UserManager<User> _userManager;
         private readonly ILogger<OrderService> _logger;
+        private readonly IUserRepository _userRepository;
         public OrderService(IOrderRepository orderRepository, IEmailService emailService, 
-            UserManager<User> userManager, ILogger<OrderService> logger)
+            UserManager<User> userManager, ILogger<OrderService> logger, IUserRepository userRepository)
         {
             _orderRepository = orderRepository;
             _emailService = emailService;
             _userManager = userManager;
             _logger = logger;
+            _userRepository = userRepository;
         }
 
         public async Task CreateOrderAsync(OrderDto order, string userId)
         {
-            if (string.IsNullOrEmpty(userId))
+            if (await _userRepository.GetByIdAsync(userId) == null)
                     throw new UserNotFoundException(userId);
-                
-            if (string.IsNullOrEmpty(order.OrderId))
-                throw new OrderNotFoundException(order.OrderId);
             
             string orderId = order.OrderId;
             Order newOrder = new()
@@ -149,7 +148,7 @@ namespace _8bitstore_be.Services
         
         public async Task ChangeOrderStatusAsync(OrderDto request)
         {
-            if (string.IsNullOrEmpty(request.OrderId))
+            if (await _orderRepository.GetByIdAsync(request.OrderId) == null)
                 throw  new OrderNotFoundException(request.OrderId);
 
             var orders = await _orderRepository.FindAsync(o => o.Id == request.OrderId);

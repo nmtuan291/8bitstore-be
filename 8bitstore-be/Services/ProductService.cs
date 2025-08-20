@@ -130,6 +130,9 @@ namespace _8bitstore_be.Services
 
         public async Task AddProductAsync(ProductDto product)
         {
+            if (await _productRepository.GetByIdAsync(product.ProductId ?? "") == null)
+                throw new ProductNotFoundException(product.ProductId ?? "Empty product ID"); 
+                    
             if (product.Price < 0)
                 throw new ProductPriceException("Price cannot be negative");
 

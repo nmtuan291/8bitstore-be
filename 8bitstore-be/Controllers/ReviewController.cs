@@ -35,12 +35,9 @@ namespace _8bitstore_be.Controllers
             if (string.IsNullOrEmpty(userId))
                 return Unauthorized();
 
-            bool success = await _reviewService.AddReviewAsync(userId, request);
+            await _reviewService.AddReviewAsync(userId, request);
             
-            if (success)
-                return Ok();
-            
-            return StatusCode(StatusCodes.Status500InternalServerError, new { message = "Failed to add review" });
+            return Ok();
         }
     }
 }
