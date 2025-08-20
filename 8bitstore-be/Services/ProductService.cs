@@ -8,6 +8,7 @@ using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using _8bitstore_be.Exceptions;
 using StackExchange.Redis;
 
 namespace _8bitstore_be.Services
@@ -107,8 +108,10 @@ namespace _8bitstore_be.Services
         public async Task<ProductDto> GetProductAsync(string productId)
         {
             var product = await _productRepository.GetByIdAsync(productId);
+            
             if (product == null)
-                throw new KeyNotFoundException("The product cannot be found"); 
+                throw new ProductNotFoundException(productId); 
+            
             return new ProductDto
             {
                 ProductId = product.ProductID,
@@ -125,40 +128,31 @@ namespace _8bitstore_be.Services
             };
         }
 
-        public async Task<bool> AddProductAsync(ProductDto product)
+        public async Task AddProductAsync(ProductDto product)
         {
-            try
-            {
-                if (string.IsNullOrEmpty(product.ProductName) || product.Price < 0)
-                    return false;
+            if (product.Price < 0)
+                throw new ProductPriceException("Price cannot be negative");
 
-                Product newProduct = new Product()
-                {
-                    ProductID = product.ProductId ?? "",
-                    ProductName = product.ProductName,
-                    Price = product.Price,
-                    Platform = product.Platform,
-                    Type = product.Type,
-                    Genre = product.Genre,
-                    Manufacturer = product.Manufacturer,
-                    Description = product.Description,
-                    ImportDate = DateTime.UtcNow,
-                    ImgUrl = product.ImgUrl,
-                    StockNum = product.StockNum,
-                    WeeklySales = 0
-                };
-                var db = _redis.GetDatabase();
-                await db.SortedSetAddAsync("products", newProduct.ProductName, 0);
-                
-                await _productRepository.AddAsync(newProduct);
-                await _productRepository.SaveChangesAsync();
-                return true;
-            }
-            catch(Exception ex)
+            Product newProduct = new Product()
             {
-                _logger.LogError(ex, "An error occured while adding a product");
-                return false;
-            }
+                ProductID = product.ProductId ?? "",
+                ProductName = product.ProductName,
+                Price = product.Price,
+                Platform = product.Platform,
+                Type = product.Type,
+                Genre = product.Genre,
+                Manufacturer = product.Manufacturer,
+                Description = product.Description,
+                ImportDate = DateTime.UtcNow,
+                ImgUrl = product.ImgUrl,
+                StockNum = product.StockNum,
+                WeeklySales = 0
+            };
+            var db = _redis.GetDatabase();
+            await db.SortedSetAddAsync("products", newProduct.ProductName, 0);
+                
+            await _productRepository.AddAsync(newProduct);
+            await _productRepository.SaveChangesAsync();
         }
 
         public async Task<List<string>> GetSuggestionAsync(string query)

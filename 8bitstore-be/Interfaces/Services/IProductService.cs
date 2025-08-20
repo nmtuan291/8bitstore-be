@@ -8,7 +8,7 @@ namespace _8bitstore_be.Interfaces.Services
     {
         Task<PaginatedResult> GetProductsAsync(ProductRequest request);
         Task<ProductDto?> GetProductAsync(string productId);
-        Task<bool> AddProductAsync(ProductDto product);
+        Task AddProductAsync(ProductDto product);
         Task<List<string>> GetSuggestionAsync(string query);
         Task<List<ProductDto>> GetAllProductAsync();
     }

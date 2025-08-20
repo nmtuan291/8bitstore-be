@@ -1,4 +1,5 @@
 using _8bitstore_be.DTO.User;
+using _8bitstore_be.Exceptions;
 using _8bitstore_be.Interfaces.Repositories;
 using _8bitstore_be.Interfaces.Services;
 using _8bitstore_be.Models;
@@ -69,8 +70,11 @@ public class UserRepository: Repository<User>, IUserRepository
 
     public async Task DeleteAddressById(Guid id)
     {
-        await _context.Addresses
+       int affected = await _context.Addresses
             .Where(a => a.Id == id)
             .ExecuteDeleteAsync();
+        
+        if (affected == 0)
+            throw new AddressException("Address does not exist");
     }
 }

@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using _8bitstore_be.Exceptions;
 
 namespace _8bitstore_be.Services
 {
@@ -22,12 +23,18 @@ namespace _8bitstore_be.Services
             _logger = logger;
         }
 
-        public async Task<bool> AddItemAsync(string userId, string productId, int quantity)
+        public async Task AddItemAsync(string userId, string productId, int quantity)
         {
             try
             {
-                if (string.IsNullOrEmpty(userId) || string.IsNullOrEmpty(productId) || quantity <= 0)
-                    return false;
+                if (string.IsNullOrEmpty(userId))
+                    throw new UserNotFoundException(userId);
+                
+                if (string.IsNullOrEmpty(productId))
+                    throw new ProductNotFoundException(productId);
+                
+                if (quantity <= 0)
+                    throw new ProductQuantityException(productId);
 
                 var cart = await _cartRepository.GetCartByUserIdAsync(userId);
                 if (cart == null)
@@ -47,7 +54,7 @@ namespace _8bitstore_be.Services
                 {
                     var product = await _productRepository.GetByIdAsync(productId);
                     if (product.StockNum < quantity)
-                        return false;
+                        throw new ProductQuantityException(productId);
                     
                     cart.CartItems.Add(new CartItem
                     {
@@ -62,61 +69,49 @@ namespace _8bitstore_be.Services
                     cartItem.Quantity = quantity;
                 }
                 await _cartRepository.SaveChangesAsync();
-                return true;
             }
             catch(Exception ex)
             {
                 _logger.LogError(ex, "Failed to add item to cart for user {UserId}", userId);
-                return false;
+                throw;
             }
         }
 
-        public async Task<bool> DeleteItemAsync(string userId, string productId)
+        public async Task DeleteItemAsync(string userId, string productId)
         {
-            try
-            {
-                if (string.IsNullOrEmpty(userId) || string.IsNullOrEmpty(productId))
-                    return false;
+            if (string.IsNullOrEmpty(userId))
+                throw new UserNotFoundException(userId);
+                
+            if (string.IsNullOrEmpty(productId))
+                throw new ProductNotFoundException(productId);
 
-                var cart = await _cartRepository.GetCartByUserIdAsync(userId);
-                if (cart == null)
-                    return false;
-                var itemToRemove = cart.CartItems.FirstOrDefault(ci => ci.ProductId == productId);
-                if (itemToRemove == null)
-                    return false;
-                cart.CartItems.Remove(itemToRemove);
-                await _cartRepository.SaveChangesAsync();
-                return true;
-            }
-            catch(Exception ex)
-            {
-                _logger.LogError(ex, "Failed to delete item to cart for user {UserId}", userId);
-                return false;
-            }
+            var cart = await _cartRepository.GetCartByUserIdAsync(userId);
+            if (cart == null)
+                throw new CartNotFoundException();
+                
+            var itemToRemove = cart.CartItems.FirstOrDefault(ci => ci.ProductId == productId);
+                
+            if (itemToRemove == null)
+                throw new CartItemNotFoundException();
+                
+            cart.CartItems.Remove(itemToRemove);
+            await _cartRepository.SaveChangesAsync();
         }
 
-        public async Task<bool> EmptyCartAsync(string userId)
+        public async Task EmptyCartAsync(string userId)
         {
-            try
-            {
-                if (string.IsNullOrEmpty(userId))
-                    return false;
+            if (string.IsNullOrEmpty(userId))
+                throw new UserNotFoundException(userId);
 
-                await _cartRepository.EmptyCartAsync(userId);
-                return true;
-            }
-            catch(Exception ex)
-            {
-                _logger.LogError(ex, "Failed to empty cart for user {UserId}", userId);
-                return false;
-            }
+            await _cartRepository.EmptyCartAsync(userId);
         }
 
         public async Task<CartDto> GetCartAsync(string userId)
         {
             var cart = await _cartRepository.GetCartByUserIdAsync(userId);
             if (cart == null)
-                throw new KeyNotFoundException("Cart with the user ID cannot be found");
+                throw new CartNotFoundException();
+            
             return new CartDto
             {
                 Id = cart.Id,

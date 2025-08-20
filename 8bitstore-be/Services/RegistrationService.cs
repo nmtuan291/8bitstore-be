@@ -1,4 +1,5 @@
 ﻿using _8bitstore_be.DTO.User;
+using _8bitstore_be.Exceptions;
 using _8bitstore_be.Interfaces.Services;
 using _8bitstore_be.Models;
 using Microsoft.AspNetCore.Identity;

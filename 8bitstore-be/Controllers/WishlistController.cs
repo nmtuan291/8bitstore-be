@@ -39,12 +39,9 @@ namespace _8bitstore_be.Controllers
             if (string.IsNullOrEmpty(userId))
                 return Unauthorized();
 
-            bool success = await _wishlistService.AddItemAsync(productId, userId);
+            await _wishlistService.AddItemAsync(productId, userId);
             
-            if (success)
-                return Ok();
-            
-            return StatusCode(StatusCodes.Status500InternalServerError, new { message = "Failed to add item to wishlist" });
+            return Ok();
         }
         
         [Authorize]
@@ -54,13 +51,10 @@ namespace _8bitstore_be.Controllers
             var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value ?? null;
             if (string.IsNullOrEmpty(userId))
                 return Unauthorized();
-
-            bool success = await _wishlistService.RemoveItemAsync(userId, productId);
             
-            if (success)
-                return Ok();
+            await _wishlistService.RemoveItemAsync(userId, productId);
             
-            return StatusCode(StatusCodes.Status500InternalServerError, new { message = "Failed to remove item from wishlist" });
+            return Ok();
         }
     }
 }

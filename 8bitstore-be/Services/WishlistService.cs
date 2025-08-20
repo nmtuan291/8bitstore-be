@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using _8bitstore_be.Exceptions;
 
 namespace _8bitstore_be.Services
 {
@@ -38,71 +39,48 @@ namespace _8bitstore_be.Services
             };
         }
 
-        public async Task<bool> AddItemAsync(string productId, string userId)
+        public async Task AddItemAsync(string productId, string userId)
         {
-            try
+            var wishlist = await _wishlistRepository.GetWishlistByUserIdAsync(userId);
+            var product = (await _productRepository.FindAsync(p => p.ProductID == productId)).FirstOrDefault();
+            if (product == null)
+                throw new ProductNotFoundException(productId);
+                
+            if (wishlist == null)
             {
-                if (string.IsNullOrEmpty(productId) || string.IsNullOrEmpty(userId))
-                    return false;
-
-                var wishlist = await _wishlistRepository.GetWishlistByUserIdAsync(userId);
-                var product = (await _productRepository.FindAsync(p => p.ProductID == productId)).FirstOrDefault();
-                if (product == null)
-                    return false;
-                if (wishlist == null)
+                wishlist = new Wishlist
                 {
-                    wishlist = new Wishlist
-                    {
-                        Id = Guid.NewGuid().ToString(),
-                        UserId = userId,
-                        Products = new List<WishlistItem>()
-                    };
-                    await _wishlistRepository.AddAsync(wishlist);
-                }
-                var wishlistItem = wishlist.Products.FirstOrDefault(p => p.ProductId == productId);
-                if (wishlistItem == null)
-                {
-                    wishlist.Products.Add(new WishlistItem
-                    {
-                        Id = Guid.NewGuid().ToString(),
-                        ProductId = product.ProductID,
-                        WishlistId = wishlist.Id,
-                    });
-                }
-                await _wishlistRepository.SaveChangesAsync();
-                return true;
+                    Id = Guid.NewGuid().ToString(),
+                    UserId = userId,
+                    Products = new List<WishlistItem>()
+                };
+                await _wishlistRepository.AddAsync(wishlist);
             }
-            catch(Exception ex)
+            var wishlistItem = wishlist.Products.FirstOrDefault(p => p.ProductId == productId);
+            if (wishlistItem == null)
             {
-                _logger.LogError(ex, "Error while adding item");
-                return false;
+                wishlist.Products.Add(new WishlistItem
+                {
+                    Id = Guid.NewGuid().ToString(),
+                    ProductId = product.ProductID,
+                    WishlistId = wishlist.Id,
+                });
             }
+            await _wishlistRepository.SaveChangesAsync();
         }
 
-        public async Task<bool> RemoveItemAsync(string userId, string productId)
+        public async Task RemoveItemAsync(string userId, string productId)
         {
-            try
+            var wishlist = await _wishlistRepository.GetWishlistByUserIdAsync(userId);
+            var product = (await _productRepository.FindAsync(p => p.ProductID == productId)).FirstOrDefault();
+            if (product == null)
+                throw new ProductNotFoundException(productId);
+            var wishlistItem = wishlist.Products.FirstOrDefault(p => p.ProductId == productId);
+            if (wishlistItem != null)
             {
-                if (string.IsNullOrEmpty(userId) || string.IsNullOrEmpty(productId))
-                    return false;
-
-                var wishlist = await _wishlistRepository.GetWishlistByUserIdAsync(userId);
-                var product = (await _productRepository.FindAsync(p => p.ProductID == productId)).FirstOrDefault();
-                if (product == null)
-                    return false;
-                var wishlistItem = wishlist.Products.FirstOrDefault(p => p.ProductId == productId);
-                if (wishlistItem != null)
-                {
-                    wishlist.Products.Remove(wishlistItem);
-                }
-                await _wishlistRepository.SaveChangesAsync();
-                return true;
+                wishlist.Products.Remove(wishlistItem);
             }
-            catch(Exception ex)
-            {
-                _logger.LogError(ex, "Error while removing item");
-                return false;
-            }
+            await _wishlistRepository.SaveChangesAsync();
         }
     }
 }

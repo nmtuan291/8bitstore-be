@@ -78,12 +78,9 @@ namespace _8bitstore_be.Controllers
             if (string.IsNullOrEmpty(userId))
                 return Unauthorized();
             
-            bool success = await _userService.ChangeAddressAsync(address, userId);
+            await _userService.ChangeAddressAsync(address, userId);
             
-            if (success)
-                return Ok(new { message = "Address updated successfully" });
-            
-            return StatusCode(StatusCodes.Status500InternalServerError, new { message = "Failed to update address" });
+            return Ok(new { message = "Address updated successfully" });
         }
 
         [Authorize]
@@ -94,12 +91,9 @@ namespace _8bitstore_be.Controllers
             if (string.IsNullOrEmpty(userId))
                 return Unauthorized();
             
-            bool success = await _userService.AddAddressAsync(address, userId);
+            await _userService.AddAddressAsync(address, userId);
             
-            if (success)
-                return Ok(new { message = "Address added successfully" });
-            
-            return StatusCode(StatusCodes.Status500InternalServerError, new { message = "Failed to add address" });
+            return Ok(new { message = "Address added successfully" });
         }
 
         [Authorize]
@@ -118,12 +112,8 @@ namespace _8bitstore_be.Controllers
         [HttpDelete("address/delete/{addressId}")]
         public async Task<IActionResult> DeleteAddress(Guid addressId)
         {
-            bool success = await _userService.DeleteAddressAsync(addressId);
-            
-            if (success)
-                return Ok(new { message = "Address deleted successfully" });
-            
-            return StatusCode(StatusCodes.Status500InternalServerError,new { message = "Failed to delete address" });
+            await _userService.DeleteAddressAsync(addressId);
+            return Ok(new { message = "Address deleted successfully" });
         }
 
         [Authorize]

@@ -46,12 +46,8 @@ namespace _8bitstore_be.Controllers
         [HttpPost]
         public async Task<IActionResult> AddProduct([FromBody] ProductDto product)
         {
-            bool success = await _productService.AddProductAsync(product);
-            
-            if (success)
-                return Ok();
-            
-            return StatusCode(StatusCodes.Status500InternalServerError, "Internal server error");
+           await _productService.AddProductAsync(product);
+           return Ok();
         }
 
         [HttpGet("get-suggestion")]

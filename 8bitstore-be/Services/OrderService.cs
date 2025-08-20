@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using _8bitstore_be.DTO.User;
+using _8bitstore_be.Exceptions;
 using Microsoft.AspNetCore.Identity;
 
 namespace _8bitstore_be.Services
@@ -26,60 +27,56 @@ namespace _8bitstore_be.Services
             _logger = logger;
         }
 
-        public async Task<bool> CreateOrderAsync(OrderDto order, string userId)
+        public async Task CreateOrderAsync(OrderDto order, string userId)
         {
-            try
-            {
-                if (string.IsNullOrEmpty(userId) || string.IsNullOrEmpty(order.OrderId) || order.AddressId == null)
-                    return false;
+            if (string.IsNullOrEmpty(userId))
+                    throw new UserNotFoundException(userId);
                 
-                string orderId = order.OrderId;
-                Order newOrder = new()
+            if (string.IsNullOrEmpty(order.OrderId))
+                throw new OrderNotFoundException(order.OrderId);
+            
+            string orderId = order.OrderId;
+            Order newOrder = new()
+            {
+                Id = orderId,
+                UserId = userId,
+                OrderDate = DateTime.UtcNow,
+                DeliveryDate = null,
+                Status = order.Status,
+                Total = order.Total ?? 0,
+                AddressId = order.AddressId ?? Guid.Empty,
+                OrderProducts = (order.Items ?? new List<OrderItemDto>()).Select(item => new OrderProduct
                 {
-                    Id = orderId,
-                    UserId = userId,
-                    OrderDate = DateTime.UtcNow,
-                    DeliveryDate = null,
-                    Status = order.Status,
-                    Total = order.Total ?? 0,
-                    AddressId = order.AddressId ?? Guid.Empty,
-                    OrderProducts = (order.Items ?? new List<OrderItemDto>()).Select(item => new OrderProduct
-                    {
-                        Id = Guid.NewGuid().ToString(),
-                        ProductId = item.ProductId,
-                        Quantity = item.Quantity,
-                        OrderId = orderId,
-                        UnitPrice = item.Price
-                    }).ToList()
-                };
-                
-                await _orderRepository.AddAsync(newOrder);
-                await _orderRepository.SaveChangesAsync();
-                
-                string subject = $"Xác nhận đơn hàng {orderId}";
-                var user = await _userManager.FindByIdAsync(userId);
-                if (user == null)
-                    return true;
-                string userEmail = user.Email ?? "";
-                
-                string emailBody = $@"
-                    <h2>Xác nhận đã đặt đơn hàng {orderId}</h2>
-                    <p>Cảm ơn vì đã đặt hàng, {user.FullName}!</p>
-                    <p><strong>Ngày đặt:</strong> {newOrder.OrderDate}</p>
-                    <p><strong>Trạng thái:</strong> {newOrder.Status}</p>
-                    <h3>Danh sách hàng:</h3>
-                    <ul>
-                        {string.Join("", newOrder.OrderProducts.Select(item => $"<li>{item.Product?.ProductName ?? item.ProductId} - {item.Quantity} x {item.UnitPrice:C}</li>"))}
-                    </ul>
-                    <p><strong>Tổng cộng:</strong> {newOrder.Total:C}</p>
-                ";
-                await _emailService.SendEmailAsync(userEmail, emailBody, subject);
-                return true;
-            }
-            catch
-            {
-                return false;
-            }
+                    Id = Guid.NewGuid().ToString(),
+                    ProductId = item.ProductId,
+                    Quantity = item.Quantity,
+                    OrderId = orderId,
+                    UnitPrice = item.Price
+                }).ToList()
+            };
+            
+            await _orderRepository.AddAsync(newOrder);
+            await _orderRepository.SaveChangesAsync();
+            
+            string subject = $"Xác nhận đơn hàng {orderId}";
+            var user = await _userManager.FindByIdAsync(userId);
+            if (user == null)
+                throw  new UserNotFoundException(userId);
+            
+            string userEmail = user.Email ?? "";
+            
+            string emailBody = $@"
+                <h2>Xác nhận đã đặt đơn hàng {orderId}</h2>
+                <p>Cảm ơn vì đã đặt hàng, {user.FullName}!</p>
+                <p><strong>Ngày đặt:</strong> {newOrder.OrderDate}</p>
+                <p><strong>Trạng thái:</strong> {newOrder.Status}</p>
+                <h3>Danh sách hàng:</h3>
+                <ul>
+                    {string.Join("", newOrder.OrderProducts.Select(item => $"<li>{item.Product?.ProductName ?? item.ProductId} - {item.Quantity} x {item.UnitPrice:C}</li>"))}
+                </ul>
+                <p><strong>Tổng cộng:</strong> {newOrder.Total:C}</p>
+            ";
+            await _emailService.SendEmailAsync(userEmail, emailBody, subject);
         }
 
         public async Task<List<OrderDto>> GetOrderAsync(string userId)
@@ -150,32 +147,23 @@ namespace _8bitstore_be.Services
             }).OrderBy(x => x.OrderDate).ToList();
         }
         
-        public async Task<bool> ChangeOrderStatusAsync(OrderDto request)
+        public async Task ChangeOrderStatusAsync(OrderDto request)
         {
-            try
+            if (string.IsNullOrEmpty(request.OrderId))
+                throw  new OrderNotFoundException(request.OrderId);
+
+            var orders = await _orderRepository.FindAsync(o => o.Id == request.OrderId);
+            var order = orders.FirstOrDefault();
+
+            if (order != null && order.Status != request.Status)
             {
-                if (string.IsNullOrEmpty(request.OrderId))
-                    return false;
-
-                var orders = await _orderRepository.FindAsync(o => o.Id == request.OrderId);
-                var order = orders.FirstOrDefault();
-
-                if (order != null && order.Status != request.Status)
+                if (order.Status == "cancelled" || order.Status == "delivered")
                 {
-                    if (order.Status == "cancelled" || order.Status == "delivered")
-                    {
-                        _logger.LogWarning($"Order {request.OrderId} status cannot be changed");
-                        return false;
-                    }
-                    order.Status = request.Status;
-                    await _orderRepository.SaveChangesAsync();
+                    _logger.LogWarning($"Order {request.OrderId} status cannot be changed");
+                    throw new OrderCompletedException(request.OrderId);
                 }
-                return true;
-            }
-            catch(Exception ex)
-            {
-                _logger.LogError(ex, ex.Message);
-                return false;
+                order.Status = request.Status;
+                await _orderRepository.SaveChangesAsync();
             }
         }
     }

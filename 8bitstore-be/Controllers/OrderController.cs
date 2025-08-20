@@ -30,11 +30,9 @@ namespace _8bitstore_be.Controllers
                 return Unauthorized();
             } 
 
-            bool success = await _orderService.CreateOrderAsync(order, userId);
-            if (success)
-                return Ok(new { message = "Order created successfully" });
+            await _orderService.CreateOrderAsync(order, userId);
             
-            return StatusCode(StatusCodes.Status500InternalServerError, new { error = "Order creation failed" });
+            return Ok(new { message = "Order created successfully" });
         }
 
         [Authorize]

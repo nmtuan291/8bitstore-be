@@ -1,5 +1,6 @@
 using System.Net;
 using System.Text.Json;
+using _8bitstore_be.Exceptions;
 
 namespace _8bitstore_be.Middlewares;
 
@@ -35,6 +36,35 @@ public class GlobalExceptionMiddleware
 
         switch (exception)
         {
+            // Not Found Exceptions - 404
+            case ProductNotFoundException:
+            case OrderNotFoundException:
+            case UserNotFoundException:
+            case CartNotFoundException:
+            case CartItemNotFoundException:
+                response.Message = exception.Message;
+                response.StatusCode = (int)HttpStatusCode.NotFound;
+                context.Response.StatusCode = (int)HttpStatusCode.NotFound;
+                break;
+
+            // Business Logic Exceptions - 400 Bad Request
+            case AddressException:
+            case UserRegisterException:
+            case ProductPriceException:
+            case ProductQuantityException:
+                response.Message = exception.Message;
+                response.StatusCode = (int)HttpStatusCode.BadRequest;
+                context.Response.StatusCode = (int)HttpStatusCode.BadRequest;
+                break;
+
+            // Conflict Exceptions - 409 Conflict
+            case OrderCompletedException:
+                response.Message = exception.Message;
+                response.StatusCode = (int)HttpStatusCode.Conflict;
+                context.Response.StatusCode = (int)HttpStatusCode.Conflict;
+                break;
+
+            // Standard .NET Exceptions
             case ArgumentNullException:
             case ArgumentException:
                 response.Message = "Invalid request data";

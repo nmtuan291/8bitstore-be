@@ -28,12 +28,8 @@ namespace _8bitstore_be.Controllers
             if (string.IsNullOrEmpty(userId))
                 return Unauthorized();
 
-            bool success = await _cartService.AddItemAsync(userId, request.ProductId, request.Quantity);
-            
-            if (success)
-                return Ok();
-            
-            return StatusCode(StatusCodes.Status500InternalServerError, "Internal server error");
+            await _cartService.AddItemAsync(userId, request.ProductId, request.Quantity);
+            return Ok();
         }
         
         [Authorize]
@@ -46,14 +42,11 @@ namespace _8bitstore_be.Controllers
 
             bool success;
             if (!string.IsNullOrEmpty(productId))
-                success = await _cartService.DeleteItemAsync(userId, productId);
+                await _cartService.DeleteItemAsync(userId, productId);
             else
-                success = await _cartService.EmptyCartAsync(userId);
+                await _cartService.EmptyCartAsync(userId);
 
-            if (success)
-                return Ok();
-            
-            return StatusCode(StatusCodes.Status500InternalServerError, "Internal server error");
+            return Ok();
         }
 
         [Authorize]

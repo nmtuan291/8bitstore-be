@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using _8bitstore_be.DTO.User;
+using _8bitstore_be.Exceptions;
 using _8bitstore_be.Interfaces.Repositories;
 using _8bitstore_be.Interfaces.Services;
 
@@ -21,44 +22,36 @@ namespace _8bitstore_be.Services
             _userManager = userManager;
         }
 
-        public async Task<bool> ChangeAddressAsync(AddressDto addressDto, string userId)
+        public async Task ChangeAddressAsync(AddressDto addressDto, string userId)
         {
-            try
-            {
-                if (addressDto.Id == Guid.Empty)
-                    return false;
+            if (addressDto.Id == Guid.Empty)
+                throw new AddressException("Address cannot be empty");
 
-                if (addressDto.IsDefault)
+            if (addressDto.IsDefault)
+            {
+                var addresses = await GetAddressesByUserIdAsync(userId);
+                foreach (var address in addresses)
                 {
-                    var addresses = await GetAddressesByUserIdAsync(userId);
-                    foreach (var address in addresses)
+                    if (address.Id != addressDto.Id)
                     {
-                        if (address.Id != addressDto.Id)
+                        var newAddress = new AddressDto
                         {
-                            var newAddress = new AddressDto
-                            {
-                                Id = address.Id,
-                                IsDefault = false,
-                                Recipent = address.Recipent,
-                                City = address.City,
-                                District = address.District,
-                                Ward = address.Ward,
-                                RecipentPhone = address.RecipentPhone,
-                                AddressDetail = address.AddressDetail,
-                            };
-                            await _userRepository.UpdateAddressAsync(newAddress);
-                        }
+                            Id = address.Id,
+                            IsDefault = false,
+                            Recipent = address.Recipent,
+                            City = address.City,
+                            District = address.District,
+                            Ward = address.Ward,
+                            RecipentPhone = address.RecipentPhone,
+                            AddressDetail = address.AddressDetail,
+                        };
+                        await _userRepository.UpdateAddressAsync(newAddress);
                     }
                 }
+            }
                 
-                await _userRepository.UpdateAddressAsync(addressDto);
-                await _userRepository.SaveChangesAsync();
-                return true;
-            }
-            catch
-            {
-                return false;
-            }
+            await _userRepository.UpdateAddressAsync(addressDto);
+            await _userRepository.SaveChangesAsync();
         }
 
         public async Task<List<string>> GetUserRoleAsync(string userId)
@@ -70,28 +63,17 @@ namespace _8bitstore_be.Services
             return (await _userManager.GetRolesAsync(user)).ToList();
         }
 
-        public async Task<bool> AddAddressAsync(AddressDto addressDto, string userId)
+        public async Task AddAddressAsync(AddressDto addressDto, string userId)
         {
-            try
-            {
-                if (string.IsNullOrEmpty(userId))
-                    return false;
-
-                await _userRepository.InsertAddressAsync(addressDto, userId);
-                await _userRepository.SaveChangesAsync();
-                return true;
-            }
-            catch
-            {
-                return false;
-            }
+            await _userRepository.InsertAddressAsync(addressDto, userId);
+            await _userRepository.SaveChangesAsync();
         }
 
         public async Task ChangePasswordAsync(string userId, string newPassword, string currentPassword)
         {
             var user = await _userRepository.GetByIdAsync(userId);
             if (user == null)
-                throw new KeyNotFoundException("User does not exists");
+                throw new UserNotFoundException(userId);
             await _userManager.ChangePasswordAsync(user, currentPassword, newPassword);
         }
 
@@ -101,7 +83,7 @@ namespace _8bitstore_be.Services
             if (user == null)
                 throw new KeyNotFoundException("User does not exists");
             string code = await _userManager.GeneratePasswordResetTokenAsync(user);
-            // TO DO
+            // TODO
         }
 
         public async Task<List<AddressDto>> GetAddressesByUserIdAsync(string userId)
@@ -120,21 +102,13 @@ namespace _8bitstore_be.Services
             }).ToList();
         }
 
-        public async Task<bool> DeleteAddressAsync(Guid id)
+        public async Task DeleteAddressAsync(Guid id)
         {
-            try
-            {
-                if (id == Guid.Empty)
-                    return false;
+            if (id == Guid.Empty)
+                throw new AddressException("Address cannot be empty");
 
-                await _userRepository.DeleteAddressById(id);
-                await _userRepository.SaveChangesAsync();
-                return true;
-            }
-            catch
-            {
-                return false;
-            }
+            await _userRepository.DeleteAddressById(id);
+            await _userRepository.SaveChangesAsync();
         }
     }
 }

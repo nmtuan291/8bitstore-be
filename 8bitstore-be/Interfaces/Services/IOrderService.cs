@@ -6,9 +6,9 @@ namespace _8bitstore_be.Interfaces.Services
 {
     public interface IOrderService
     {
-        Task<bool> CreateOrderAsync(OrderDto order, string userId);
+        Task CreateOrderAsync(OrderDto order, string userId);
         Task<List<OrderDto>> GetOrderAsync(string userId);
-        Task<bool> ChangeOrderStatusAsync(OrderDto request);
+        Task ChangeOrderStatusAsync(OrderDto request);
         Task<List<OrderDto>> GetOrdersAsync();
     }
 } 
