@@ -7,8 +7,8 @@ on:
 
 env:
   PROJECT_ID: ${{ secrets.GCP_PROJECT_ID }}
-  REGION: us-central1
-  REPO_NAME: 8bitstore-repo
+  REGION: asia-east2
+  REPO_NAME: eightbitstore-repo
   IMAGE_NAME: 8bitstore-api
   SERVICE_NAME: 8bitstore-api-service
 
@@ -56,4 +56,13 @@ jobs:
           secrets: |
             ConnectionStrings__WebApiDatabase=NEON_DB_CONNECTION_STRING:latest
             Redis__ConnectionString=REDIS_CONNECTION_STRING:latest
+            Vnpay__TmnCode=VNPAY_TMNCODE:latest
+            Vnpay__HashSecret=VNPAY_HASHSECRET:latest
+            Vnpay__BaseUrl=VNPAY_BASEURL:latest
+            Vnpay__PaymentBackReturnUrl=VNPAY_RETURNURL:latest
+            EmailSetting__SmtpHost=SMTP_HOST:latest
+            EmailSetting__SmtpPort=SMTP_PORT:latest
+            EmailSetting__SmtpUser=SMTP_USER:latest
+            EmailSetting__SmtpPass=SMTP_PASS:latest
+            EmailSetting__FromEmail=SMTP_FROM_EMAIL:latest
           flags: '--allow-unauthenticated --port=8080'
