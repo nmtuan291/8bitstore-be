@@ -53,16 +53,16 @@ jobs:
           image: ${{ env.REGION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.REPO_NAME }}/${{ env.IMAGE_NAME }}:${{ github.sha }}
           env_vars: |
             ASPNETCORE_ENVIRONMENT=Production
+            Vnpay__TmnCode=Y3E1QYB5
+            Vnpay__BaseUrl=https://sandbox.vnpayment.vn/paymentv2/vpcpay.html
+            Vnpay__PaymentBackReturnUrl=https://8bitstore-brown.vercel.app/payment-processing
+            EmailSetting__SmtpHost=smtp.gmail.com
+            EmailSetting__SmtpPort=587
+            EmailSetting__SmtpUser=minhtuan034015@gmail.com
+            EmailSetting__FromEmail=minhtuan034015@gmail.com
           secrets: |
-            ConnectionStrings__WebApiDatabase=NEON_DB_CONNECTION_STRING:latest
-            Redis__ConnectionString=REDIS_CONNECTION_STRING:latest
-            Vnpay__TmnCode=VNPAY_TMNCODE:latest
-            Vnpay__HashSecret=VNPAY_HASHSECRET:latest
-            Vnpay__BaseUrl=VNPAY_BASEURL:latest
-            Vnpay__PaymentBackReturnUrl=VNPAY_RETURNURL:latest
-            EmailSetting__SmtpHost=SMTP_HOST:latest
-            EmailSetting__SmtpPort=SMTP_PORT:latest
-            EmailSetting__SmtpUser=SMTP_USER:latest
-            EmailSetting__SmtpPass=SMTP_PASS:latest
-            EmailSetting__FromEmail=SMTP_FROM_EMAIL:latest
+            ConnectionStrings__WebApiDatabase=store-db-connection:latest
+            Redis__ConnectionString=redis-connection:latest
+            Vnpay__HashSecret=vnpay-hashsecret:latest
+            EmailSetting__SmtpPass=smtp-pass:latest
           flags: '--allow-unauthenticated --port=8080'
