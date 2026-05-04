@@ -9,8 +9,8 @@ env:
   PROJECT_ID: ${{ secrets.GCP_PROJECT_ID }}
   REGION: asia-east2
   REPO_NAME: eightbitstore-repo
-  IMAGE_NAME: 8bitstore-api
-  SERVICE_NAME: 8bitstore-api-service
+  IMAGE_NAME: eightbitstore-api
+  SERVICE_NAME: eightbitstore-api
 
 jobs:
   deploy:
